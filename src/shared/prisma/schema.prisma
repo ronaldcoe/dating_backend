@@ -1,0 +1,189 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum UserStatus {
+  ACTIVE
+  LOCKED
+  BANNED
+  PAUSED
+  DELETED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum RelationshipType {
+  CASUAL
+  SERIOUS
+  FRIENDSHIP
+  TEMPLE_MARRIAGE
+  NOT_SURE
+}
+
+model User {
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  email              String              @unique
+  password           String
+  role               Role
+  status             UserStatus
+  birthDate          DateTime?           @map("birth_date")
+  banReason          String?             @map("ban_reason") @db.Text
+  bio                String?             @db.Text
+  locationLat        Float?              @map("location_lat")
+  locationLng        Float?              @map("location_lng")
+  gender             Gender?
+  verified           Boolean             @default(false)
+  lastActive         DateTime?           @map("last_active")
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @updatedAt @map("updated_at")
+  photos             Photo[]
+  refreshTokens      RefreshToken[]
+  interests          UserInterest[]
+  userPreferences    UserPreference?
+  resetPasswordToken ResetPasswordToken?
+  sentInteractions     UserInteraction[] @relation("SentInteractions")
+  receivedInteractions UserInteraction[] @relation("ReceivedInteractions")
+
+
+
+  @@map("users")
+}
+
+enum PhotoStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REJECTED
+}
+
+model Photo {
+  id                Int         @id @default(autoincrement())
+  userId            Int         @map("user_id")
+  user              User        @relation(fields: [userId], references: [id])
+  originalUrl       String      @map("original_url")
+  standardUrl       String      @map("standard_url") // Standard sized version
+  thumbnailUrl      String      @map("thumbnail_url") // Thumbnail version
+  position          Int // For ordering photos
+  isPrimary         Boolean     @default(false) @map("is_primary") // Primary profile photo
+  status            PhotoStatus @default(PENDING) // PENDING, COMPLETED, FAILED, REJECTED
+  moderationMessage String?     @map("moderation_message") // Details about moderation
+  moderatedAt       DateTime?   @map("moderated_at")
+  processingError   String?     @map("processing_error") // Any error messages
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("photos")
+}
+
+model RefreshToken {
+  id         Int      @id @default(autoincrement())
+  token      String
+  userId     Int      @map("user_id")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  revoked    Boolean  @default(false)
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  deviceInfo String?  @map("device_info")
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model Interest {
+  id        Int            @id @default(autoincrement())
+  name      String
+  createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @updatedAt @map("updated_at")
+  users     UserInterest[]
+
+  @@map("interests")
+}
+
+model UserInterest {
+  userId     Int      @map("user_id")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interestId Int      @map("interest_id")
+  interest   Interest @relation(fields: [interestId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@id([userId, interestId])
+  @@map("user_interests")
+}
+
+model UserPreference {
+  id                   Int              @id @default(autoincrement())
+  userId               Int              @map("user_id")
+  user                 User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  minAge               Int              @map("min_age")
+  maxAge               Int              @map("max_age")
+  distanceRadius       Int              @map("distance_radius")
+  realtionshipType     RelationshipType @map("relationship_type")
+  theme                String
+  hiddenProfile        Boolean          @map("hiden_profile")
+  showOnlineStatus     Boolean          @map("show_online_status")
+  notificationsEnabled Boolean          @map("notifications_enabled")
+  createdAt            DateTime         @default(now()) @map("created_at")
+  updatedAt            DateTime         @updatedAt @map("updated_at")
+
+  @@unique([userId])
+  @@map("user_preferences")
+}
+
+model ResetPasswordToken {
+  id        Int      @id @default(autoincrement())
+  token     String
+  email     String   @unique @map("email")
+  user      User     @relation(fields: [email], references: [email], onDelete: Cascade)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([expiresAt]) // Index for cleanup
+  @@map("reset_password_tokens")
+}
+
+enum UserInteractionType {
+  DISLIKE
+  LIKE
+  BLOCK
+}
+
+model UserInteraction {
+  id               Int             @id @default(autoincrement())
+  sourceUserId     Int             @map("source_user_id")
+  sourceUser       User            @relation(fields: [sourceUserId], references: [id], name: "SentInteractions")
+  targetUserId     Int             @map("target_user_id")
+  targetUser       User            @relation(fields: [targetUserId], references: [id], name: "ReceivedInteractions")
+  type             UserInteractionType
+  isMatched        Boolean         @default(false) @map("is_matched")
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+  // Optional: Add when a like was viewed/read
+  viewedAt         DateTime?       @map("viewed_at")
+
+  @@unique([sourceUserId, targetUserId])
+  @@index([sourceUserId])
+  @@index([targetUserId])
+  @@index([type])
+  @@index([isMatched])
+  @@map("user_interactions")
+}

@@ -1,0 +1,12 @@
+{
+  "name": "token-cleanup-lambda",
+  "version": "1.0.0",
+  "description": "Lambda function to delete expired tokens",
+  "main": "index.js",
+  "dependencies": {
+    "pg": "^8.11.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
