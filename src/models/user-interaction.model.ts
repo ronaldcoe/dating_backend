@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { UserInteractionType } from "@prisma/client";
 
+// Basic CRUD operations dont use for business logic
 export async function createUserInteraction(data: {
   sourceUserId: number, 
   targetUserId: number, 
