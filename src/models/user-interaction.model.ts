@@ -201,3 +201,36 @@ export async function unmatchUsers(userId1: number, userId2: number) {
     })
   ]);
 }
+
+// Block a user
+export async function blockUser(sourceUserId: number, targetUserId: number) {
+  return await db.userInteraction.upsert({
+    where: {
+      sourceUserId_targetUserId: {
+        sourceUserId,
+        targetUserId
+      }
+    },
+    update: {
+      type: "BLOCK",
+      isMatched: false
+    },
+    create: {
+      sourceUserId,
+      targetUserId,
+      type: "BLOCK"
+    }
+  });
+}
+
+// unblock an user
+export async function unblockUser(sourceUserId: number, targetUserId: number) {
+  // Use delete many so prisma doesn't throw an error if the record doesn't exist
+  return await db.userInteraction.deleteMany({
+    where: {
+      sourceUserId,
+      targetUserId,
+      type: 'BLOCK'
+    }
+  });
+}

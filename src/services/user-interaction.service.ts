@@ -1,6 +1,8 @@
 import {
   likeUser,
-  dislikeUser
+  dislikeUser,
+  blockUser,
+  unblockUser
 } from '@/models/user-interaction.model'
 import {
   isValidUserInteraction
@@ -26,6 +28,28 @@ export class UserInteractionService {
     }
 
     return await dislikeUser(sourceUserId, targetUserId);
+  }
+
+  // Block a user
+  static async blockUser(sourceUserId: number, targetUserId: number) {
+    // validate block
+    const isValid = await isValidUserInteraction(sourceUserId, targetUserId);
+    if (!isValid) {
+      throw new Error('Invalid block');
+    }
+
+    return await blockUser(sourceUserId, targetUserId);
+  }
+
+  // Unblock a user
+  static async unblockUser(sourceUserId: number, targetUserId: number) {
+    const isValid = await isValidUserInteraction(sourceUserId, targetUserId);
+
+    if (!isValid) {
+      throw new Error('Invalid unblock');
+    }
+
+    return await unblockUser(sourceUserId, targetUserId);
   }
 
 }
