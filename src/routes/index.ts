@@ -5,6 +5,7 @@ import photoRoutes from './photo.routes'
 import resetPasswordRoutes from './reset-password.routes'
 import adminRoutes from './admin'
 import userInteractionRoutes from './user-interaction.routes';
+import reportRoutes from './report.routes';
 
 const router = Router();
 
@@ -14,6 +15,7 @@ router.use('/users', userRoutes)
 router.use('/photos', photoRoutes)
 router.use('/reset-password', resetPasswordRoutes)
 router.use('/user-interactions', userInteractionRoutes);
+router.use('/reports', reportRoutes);
 
 router.use('/admin', adminRoutes)
 export default router;

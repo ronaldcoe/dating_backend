@@ -17,7 +17,9 @@ export class UserInteractionService {
       throw new Error('Invalid like');
     }
 
-    return await likeUser(sourceUserId, targetUserId);
+    const isMatch = await likeUser(sourceUserId, targetUserId);
+
+    return isMatch;
   }
 
   static async dislikeUser(sourceUserId: number, targetUserId: number) {

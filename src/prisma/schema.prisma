@@ -36,31 +36,32 @@ enum RelationshipType {
 }
 
 model User {
-  id                 Int                 @id @default(autoincrement())
-  name               String
-  email              String              @unique
-  password           String
-  role               Role
-  status             UserStatus
-  birthDate          DateTime?           @map("birth_date")
-  banReason          String?             @map("ban_reason") @db.Text
-  bio                String?             @db.Text
-  locationLat        Float?              @map("location_lat")
-  locationLng        Float?              @map("location_lng")
-  gender             Gender?
-  verified           Boolean             @default(false)
-  lastActive         DateTime?           @map("last_active")
-  createdAt          DateTime            @default(now()) @map("created_at")
-  updatedAt          DateTime            @updatedAt @map("updated_at")
-  photos             Photo[]
-  refreshTokens      RefreshToken[]
-  interests          UserInterest[]
-  userPreferences    UserPreference?
-  resetPasswordToken ResetPasswordToken?
-  sentInteractions     UserInteraction[] @relation("SentInteractions")
-  receivedInteractions UserInteraction[] @relation("ReceivedInteractions")
-
-
+  id                   Int                 @id @default(autoincrement())
+  name                 String
+  email                String              @unique
+  password             String
+  role                 Role
+  status               UserStatus
+  birthDate            DateTime?           @map("birth_date")
+  banReason            String?             @map("ban_reason") @db.Text
+  bio                  String?             @db.Text
+  locationLat          Float?              @map("location_lat")
+  locationLng          Float?              @map("location_lng")
+  gender               Gender?
+  verified             Boolean             @default(false)
+  lastActive           DateTime?           @map("last_active")
+  createdAt            DateTime            @default(now()) @map("created_at")
+  updatedAt            DateTime            @updatedAt @map("updated_at")
+  photos               Photo[]
+  refreshTokens        RefreshToken[]
+  interests            UserInterest[]
+  userPreferences      UserPreference?
+  resetPasswordToken   ResetPasswordToken?
+  sentInteractions     UserInteraction[]   @relation("SentInteractions")
+  receivedInteractions UserInteraction[]   @relation("ReceivedInteractions")
+  reports              Report[]            @relation("Reporter")
+  reported             Report[]            @relation("Reported")
+  reviewer             Report[]            @relation("Reviewer")
 
   @@map("users")
 }
@@ -168,17 +169,16 @@ enum UserInteractionType {
 }
 
 model UserInteraction {
-  id               Int             @id @default(autoincrement())
-  sourceUserId     Int             @map("source_user_id")
-  sourceUser       User            @relation(fields: [sourceUserId], references: [id], name: "SentInteractions")
-  targetUserId     Int             @map("target_user_id")
-  targetUser       User            @relation(fields: [targetUserId], references: [id], name: "ReceivedInteractions")
-  type             UserInteractionType
-  isMatched        Boolean         @default(false) @map("is_matched")
-  createdAt        DateTime        @default(now()) @map("created_at")
-  updatedAt        DateTime        @updatedAt @map("updated_at")
-  // Optional: Add when a like was viewed/read
-  viewedAt         DateTime?       @map("viewed_at")
+  id           Int                 @id @default(autoincrement())
+  sourceUserId Int                 @map("source_user_id")
+  sourceUser   User                @relation(fields: [sourceUserId], references: [id], name: "SentInteractions")
+  targetUserId Int                 @map("target_user_id")
+  targetUser   User                @relation(fields: [targetUserId], references: [id], name: "ReceivedInteractions")
+  type         UserInteractionType
+  isMatched    Boolean             @default(false) @map("is_matched")
+  createdAt    DateTime            @default(now()) @map("created_at")
+  updatedAt    DateTime            @updatedAt @map("updated_at")
+  viewedAt     DateTime?           @map("viewed_at")
 
   @@unique([sourceUserId, targetUserId])
   @@index([sourceUserId])
@@ -186,4 +186,20 @@ model UserInteraction {
   @@index([type])
   @@index([isMatched])
   @@map("user_interactions")
+}
+
+model Report {
+  id         Int      @id @default(autoincrement())
+  sourceUserId   Int      @map("source_id")
+  source     User     @relation(fields: [sourceUserId], references: [id], name: "Reporter")
+  targetUserId   Int      @map("target_id")
+  target     User     @relation(fields: [targetUserId], references: [id], name: "Reported")
+  reason     String
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  reviewed   Boolean  @default(false)
+  resolution String?
+  reviewedAt DateTime? @map("reviewed_at")
+  reviewedBy Int?     @map("reviewed_by")
+  reviewer   User?    @relation(fields: [reviewedBy], references: [id], name: "Reviewer")
 }

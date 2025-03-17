@@ -18,9 +18,9 @@ export class UserInteractionController {
       }
 
       // Like user
-      await UserInteractionService.likeUser(sourceUserId, targetUserId);
+      const isMatch = await UserInteractionService.likeUser(sourceUserId, targetUserId);
 
-      res.status(200).json({ success: true, message: 'User liked' });
+      res.status(200).json({ success: true, message: 'User liked', isMatch });
     } catch (error: any) {
       res.status(400).json({ success: false, message: error.message || 'Failed to like user' });
     }

@@ -16,7 +16,7 @@ if (envConfig.error) {
 
 try {
   // Construct absolute path to schema.prisma
-  const schemaPath = path.resolve(process.cwd(), 'src/shared/prisma/schema.prisma');
+  const schemaPath = path.resolve(process.cwd(), 'src/prisma/schema.prisma');
   
   // Get the DATABASE_URL from .env.test
   const testDatabaseUrl = process.env.DATABASE_URL;

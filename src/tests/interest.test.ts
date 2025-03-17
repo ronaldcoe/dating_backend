@@ -6,8 +6,8 @@ import { UserStatus } from '@prisma/client';
 import { createTestUser, generateToken } from './helpers';
 
 describe('Interest API', () => {
-  // Registration Tests
-  describe('POST /api/users/interest', () => {
+
+  describe('GET /api/users/interest', () => {
     it('should return all interests', async() =>{
       const user = await createTestUser()
       const token = await generateToken(user.id)
@@ -23,7 +23,7 @@ describe('Interest API', () => {
     
   })
 
-  describe('POST /api/users/interest', () => {
+  describe('GET /api/users/interest', () => {
     it('should required auth', async() =>{
 
       const response = await request(app)

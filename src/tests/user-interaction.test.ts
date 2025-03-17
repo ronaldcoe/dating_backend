@@ -20,6 +20,29 @@ describe('User Interaction API', () => {
       expect(response.body.message).toBe('User liked');
     });
 
+    it('should return if is a match', async () => {
+      const user = await createTestUser();
+      const token = generateToken(user.id);
+      const targetUser = await createTestUser();
+      const targetUserToken = generateToken(targetUser.id);
+
+      await request(app)
+        .post('/api/user-interactions/like')
+        .set('Authorization', `Bearer ${targetUserToken}`)
+        .send({ targetUserId: user.id });
+      
+      const response = await request(app)
+        .post('/api/user-interactions/like')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ targetUserId: targetUser.id });
+      
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.message).toBe('User liked');
+      expect(response.body.isMatch).toBe(true);
+
+    })
+
     it('should require authentication', async () => {
       const response = await request(app)
         .post('/api/user-interactions/like')

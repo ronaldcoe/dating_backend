@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { validateProfileUpdate } from '../utils/validators';
-import { UserService } from '@/services/user-service';
+import { UserService } from '@/services/user.service';
 
 export class UserController {
   /**
