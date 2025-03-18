@@ -59,3 +59,23 @@ export const createTesAdmintUser = async (customData = {}) => {
     data: userData
   });
 };
+
+// Create test moderator user
+export const createTestModerator = async (customData = {}) => {
+  // Hash password
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash('password123', salt);
+  
+  const userData = {
+    name: 'Test User',
+    email: `test-${Date.now()}@example.com`,
+    password: hashedPassword,
+    role: Role.MODERATOR,
+    status: UserStatus.ACTIVE,
+    ...customData
+  };
+  
+  return db.user.create({
+    data: userData
+  });
+}

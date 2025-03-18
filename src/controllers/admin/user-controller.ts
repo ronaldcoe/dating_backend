@@ -8,12 +8,26 @@ export class AdminUserController {
    */
   static async getAllUsers(req: Request, res: Response): Promise<void> {
     try {
-      const users = await AdminUserService.getAllUsers();
+
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      
+      // Validate pagination parameters
+      if (page < 1 || limit < 1 || limit > 100) {
+        res.status(400).json({ 
+          success: false, 
+          message: "Invalid pagination parameters. Page must be >= 1 and limit must be between 1 and 100" 
+        });
+        return;
+      }
+
+      const users = await AdminUserService.getAllUsers(page, limit);
       
       res.status(200).json({
         success: true,
         message: 'Users fetched successfully',
-        data: users,
+        data: users.data,
+        pagination: users.pagination
       });
     } catch (error: any) {
       res.status(400).json({

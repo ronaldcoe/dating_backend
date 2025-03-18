@@ -6,13 +6,6 @@ type ReportType = {
   reason: string;
 }
 
-// Admin routes
-export async function getReports() {
-  return db.report.findMany({
-    orderBy: { createdAt: 'desc' }
-  });
-}
-
 export async function getReport(id: number) {
   return db.report.findUnique({
     where: { id }

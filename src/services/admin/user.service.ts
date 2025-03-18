@@ -5,8 +5,8 @@ import {
 import { UserStatus } from '@prisma/client'
 
 export class AdminUserService {
-  static async getAllUsers() {
-    return getAllUsers()
+  static async getAllUsers(page: number, limit: number) {
+    return await getAllUsers({page, limit})
   }
 
   static async updateUserStatus(id: number, status: UserStatus) {

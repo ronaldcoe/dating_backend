@@ -1,5 +1,5 @@
 import {
-  createReport
+  createReport,
 } from '@/models/report.model';
 import { isValidReport } from '@/utils/report.utils';
 

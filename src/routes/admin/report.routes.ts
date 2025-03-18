@@ -1,10 +1,11 @@
 import { Router } from 'express';
-import { AdminUserController } from '@/controllers/admin/user-controller';
+import { AdminReportController } from '@/controllers/admin/report.controller';
 import { authenticate, authorize, handleTokenRefresh } from '@/middlewares/auth';
 import { Role } from '@prisma/client';
+
 const router = Router();
 
-//get all users
-router.get('/', AdminUserController.getAllUsers);
+// Get all reports with pagination
+router.get('/', AdminReportController.getReports);
 
 export default router;
