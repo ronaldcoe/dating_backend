@@ -131,7 +131,6 @@ export const refreshAccessToken = async (
 ): Promise<void> => {
   try {
     const refreshToken = req.refreshToken;
-    
     if (!refreshToken) {
       res.status(401).json({ success: false, message: 'Refresh token required' });
       return;
@@ -243,18 +242,15 @@ export const handleTokenRefresh = async (
     
     // Verify and generate new tokens
     const decoded = jwt.verify(refreshToken, JWT_SECRET) as JwtPayload;
-    
     // Generate new access token
     const newAccessToken = jwt.sign(
       { userId: decoded.userId },
       JWT_SECRET,
       <jwt.SignOptions>{ expiresIn: JWT_EXPIRES_IN }
     );
-    
-    res.json({
-      success: true,
-      token: newAccessToken
-    });
+  
+    // Send new access token
+    res.setHeader('x-new-access-token', newAccessToken);
   } catch (error) {
     res.status(500).json({ success: false, message: 'Token refresh error' });
   }

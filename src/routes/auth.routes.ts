@@ -12,4 +12,6 @@ router.post('/login', AuthController.login);
 
 router.post('/refresh', handleTokenRefresh)
 
+router.get('/verify-token', authenticate, AuthController.verifyToken);
+
 export default router;

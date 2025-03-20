@@ -60,6 +60,24 @@ export class AuthController {
       });
     }
   }
+
+  static async verifyToken(req: Request, res: Response): Promise<void> {
+    try {
+      const newToken = res.getHeader('x-new-access-token');
+      
+      res.status(200).json({
+        success: true,
+        message: 'Token is valid',
+        ...(newToken ? { token: newToken } : {})
+      });
+    } catch (error) {
+      console.error('Error in verifyToken controller:', error);
+      res.status(500).json({
+        success: false,
+        message: 'An error occurred while verifying token'
+      });
+    }
+  }
 }
 
 // No need to export default instance since we're using static methods
