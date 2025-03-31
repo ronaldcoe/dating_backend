@@ -38,6 +38,37 @@ export class AdminUserController {
   }
 
   /**
+   * Get user by ID
+   * @route GET /api/admin/users/:id
+   */
+  static async getUserById(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+
+      const user = await AdminUserService.getUserById(Number(id));
+
+      if (!user) {
+        res.status(404).json({
+          success: false,
+          message: 'User not found',
+        });
+        return;
+      }
+
+      res.status(200).json({
+        success: true,
+        message: 'User fetched successfully',
+        data: user,
+      });
+    } catch (error: any) {
+      res.status(400).json({
+        success: false,
+        message: error.message || 'Failed to fetch user',
+      });
+    }
+  }
+
+  /**
    * Update user status
    * @route PUT /api/admin/users/:id/status
    */

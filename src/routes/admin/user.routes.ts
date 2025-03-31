@@ -6,5 +6,7 @@ const router = Router();
 
 //get all users
 router.get('/', AdminUserController.getAllUsers);
+//get user by id
+router.get('/:id', AdminUserController.getUserById);
 
 export default router;
