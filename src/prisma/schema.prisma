@@ -131,19 +131,19 @@ model UserInterest {
 }
 
 model UserPreference {
-  id                   Int              @id @default(autoincrement())
-  userId               Int              @map("user_id")
-  user                 User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  minAge               Int              @map("min_age")
-  maxAge               Int              @map("max_age")
-  distanceRadius       Int              @map("distance_radius")
-  realtionshipType     RelationshipType @map("relationship_type")
-  theme                String
-  hiddenProfile        Boolean          @map("hiden_profile")
-  showOnlineStatus     Boolean          @map("show_online_status")
-  notificationsEnabled Boolean          @map("notifications_enabled")
-  createdAt            DateTime         @default(now()) @map("created_at")
-  updatedAt            DateTime         @updatedAt @map("updated_at")
+  id                   Int               @id @default(autoincrement())
+  userId               Int               @map("user_id")
+  user                 User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  minAge               Int?              @map("min_age")
+  maxAge               Int?              @map("max_age")
+  distanceRadius       Int?              @map("distance_radius")
+  realtionshipType     RelationshipType? @map("relationship_type")
+  theme                String?
+  hiddenProfile        Boolean?          @map("hiden_profile")
+  showOnlineStatus     Boolean?          @map("show_online_status")
+  notificationsEnabled Boolean?          @map("notifications_enabled")
+  createdAt            DateTime?         @default(now()) @map("created_at")
+  updatedAt            DateTime?         @updatedAt @map("updated_at")
 
   @@unique([userId])
   @@map("user_preferences")
@@ -189,17 +189,17 @@ model UserInteraction {
 }
 
 model Report {
-  id         Int      @id @default(autoincrement())
-  sourceUserId   Int      @map("source_id")
-  source     User     @relation(fields: [sourceUserId], references: [id], name: "Reporter")
-  targetUserId   Int      @map("target_id")
-  target     User     @relation(fields: [targetUserId], references: [id], name: "Reported")
-  reason     String
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
-  reviewed   Boolean  @default(false)
-  resolution String?
-  reviewedAt DateTime? @map("reviewed_at")
-  reviewedBy Int?     @map("reviewed_by")
-  reviewer   User?    @relation(fields: [reviewedBy], references: [id], name: "Reviewer")
+  id           Int       @id @default(autoincrement())
+  sourceUserId Int       @map("source_id")
+  source       User      @relation(fields: [sourceUserId], references: [id], name: "Reporter")
+  targetUserId Int       @map("target_id")
+  target       User      @relation(fields: [targetUserId], references: [id], name: "Reported")
+  reason       String
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  reviewed     Boolean   @default(false)
+  resolution   String?
+  reviewedAt   DateTime? @map("reviewed_at")
+  reviewedBy   Int?      @map("reviewed_by")
+  reviewer     User?     @relation(fields: [reviewedBy], references: [id], name: "Reviewer")
 }
