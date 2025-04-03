@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Socket.IO Test</title>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script>
+    // Connect when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      // Create connection
+      const socket = io('http://localhost:8000');
+
+      // Connection events
+      socket.on('connect', () => {
+        console.log('Connected!');
+        document.getElementById('status').textContent = 'Connected';
+        document.getElementById('status').style.color = 'green';
+      });
+
+      socket.on('disconnect', () => {
+        console.log('Disconnected!');
+        document.getElementById('status').textContent = 'Disconnected';
+        document.getElementById('status').style.color = 'red';
+      });
+
+      socket.on('connect_error', (err) => {
+        console.log('Connection error:', err);
+        document.getElementById('status').textContent = 'Error: ' + err.message;
+        document.getElementById('status').style.color = 'red';
+      });
+
+      // Test sending a message
+      document.getElementById('send').addEventListener('click', () => {
+        const event = document.getElementById('event').value;
+        const message = document.getElementById('message').value;
+        
+        try {
+          const data = message ? JSON.parse(message) : {};
+          socket.emit(event, data);
+          console.log(`Sent: ${event}`, data);
+        } catch (e) {
+          console.error('Invalid JSON:', e);
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <h1>Socket.IO Test</h1>
+  <div>
+    <p>Status: <span id="status">Disconnected</span></p>
+    <div>
+      <input id="event" placeholder="Event name" value="echo">
+      <input id="message" placeholder='{"message": "Hello"}'>
+      <button id="send">Send</button>
+    </div>
+  </div>
+</body>
+</html>

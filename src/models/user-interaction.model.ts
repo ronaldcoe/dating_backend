@@ -58,6 +58,9 @@ export async function getUserInteractionsByUserId(userId: number) {
   return await db.userInteraction.findMany({
     where: {
       sourceUserId: userId
+    },
+    select: {
+      targetUserId: true
     }
   });
 }

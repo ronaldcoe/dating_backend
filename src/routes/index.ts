@@ -7,6 +7,7 @@ import adminRoutes from './admin'
 import userInteractionRoutes from './user-interaction.routes';
 import reportRoutes from './report.routes';
 import userPreferenceRoutes from './user-preference.routes';
+import swipeQueueRoutes from './swipe-queue.routes';
 
 const router = Router();
 
@@ -18,6 +19,7 @@ router.use('/reset-password', resetPasswordRoutes)
 router.use('/user-interactions', userInteractionRoutes);
 router.use('/reports', reportRoutes);
 router.use('/user-preferences', userPreferenceRoutes);
+router.use('/swipe-queue', swipeQueueRoutes);
 
 
 router.use('/admin', adminRoutes)
