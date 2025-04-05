@@ -7,14 +7,14 @@ import {
 import {
   isValidUserInteraction
 } from '@/utils/user-interaction.utils'
-
+import { ValidationError } from "@/utils/errors";
 export class UserInteractionService {
 
   static async likeUser(sourceUserId: number, targetUserId: number) {  
     // validate like
     const isValid = await isValidUserInteraction(sourceUserId, targetUserId);
-    if (!isValid) {
-      throw new Error('Invalid like');
+    if (!isValid.success) {
+      throw new ValidationError(isValid.message);
     }
 
     const isMatch = await likeUser(sourceUserId, targetUserId);
@@ -25,19 +25,20 @@ export class UserInteractionService {
   static async dislikeUser(sourceUserId: number, targetUserId: number) {
     // validate dislike
     const isValid = await isValidUserInteraction(sourceUserId, targetUserId);
-    if (!isValid) {
-      throw new Error('Invalid dislike');
+    console.log('isValid', isValid);
+    if (!isValid.success) {
+      throw new ValidationError(isValid.message);
     }
 
-    return await dislikeUser(sourceUserId, targetUserId);
+    // return await dislikeUser(sourceUserId, targetUserId);
   }
 
   // Block a user
   static async blockUser(sourceUserId: number, targetUserId: number) {
     // validate block
     const isValid = await isValidUserInteraction(sourceUserId, targetUserId);
-    if (!isValid) {
-      throw new Error('Invalid block');
+    if (!isValid.success) {
+      throw new ValidationError(isValid.message);
     }
 
     return await blockUser(sourceUserId, targetUserId);
@@ -47,8 +48,8 @@ export class UserInteractionService {
   static async unblockUser(sourceUserId: number, targetUserId: number) {
     const isValid = await isValidUserInteraction(sourceUserId, targetUserId);
 
-    if (!isValid) {
-      throw new Error('Invalid unblock');
+    if (!isValid.success) {
+      throw new ValidationError(isValid.message);
     }
 
     return await unblockUser(sourceUserId, targetUserId);

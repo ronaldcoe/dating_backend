@@ -16,7 +16,6 @@ export class ResetPasswordService {
     }
 
     const token = generateToken();
-    console.log(token);
     // Delete old token if exists
     await deleteOldToken(email);
     const hashedToken = hashToken(token);

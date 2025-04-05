@@ -28,7 +28,6 @@ export class ResetPasswordController {
         message: "Password reset created",
       });
     } catch (error: any) {
-      console.log("this is error ", error.code);
       if (error.code === "USER_NOT_FOUND") {
         res.status(404).json({
           success: false,

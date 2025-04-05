@@ -35,12 +35,11 @@ export class SwipeQueueService {
       ...swipeQueue.map(p => p.targetUserId)
     ]
 
-    console.log('Excluded IDs:', excludedIds)
-
     const baseWhereClause = {
       id: {
         notIn: excludedIds
       },
+      role: 'USER',
       status: 'ACTIVE',
       birthDate: {
         gte: minBirthDate,
@@ -48,7 +47,7 @@ export class SwipeQueueService {
       },
     }
 
-    console.log('Base where clause:', baseWhereClause)
+    console.log('baseWhereClause', baseWhereClause)
 
     const profiles = await getProfiles(baseWhereClause)
 

@@ -71,5 +71,24 @@ describe('User Preference API', () => {
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
     })
+
+    it('should return 400 if minAge is less than 18', async () => {
+      const user = await createTestUser();
+      const token = generateToken(user.id);
+      
+      const invalidPreferences = {
+        minAge: 17,
+        maxAge: 30,
+      }
+      
+      const response = await request(app)
+        .patch('/api/user-preferences')
+        .set('Authorization', `Bearer ${token}`)
+        .send(invalidPreferences);
+
+      expect(response.status).toBe(400);
+      expect(response.body.success).toBe(false);
+      expect(response.body.message).toBe('Minimum age must be at least 18');
+    })
   })
 })

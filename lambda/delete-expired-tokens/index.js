@@ -23,9 +23,6 @@ exports.handler = async (event) => {
 
     const result = await client.query(deleteQuery);
 
-    // Log and return results
-    console.log(`Deleted ${result.rowCount} expired tokens`);
-
     return {
       statusCode: 200,
       body: JSON.stringify({

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { UserInteractionService } from '@/services/user-interaction.service';
+import { ValidationError, NotFoundError, AuthenticationError } from '@/utils/errors'
 
 export class UserInteractionController {
   /**
@@ -22,7 +23,15 @@ export class UserInteractionController {
 
       res.status(200).json({ success: true, message: 'User liked', isMatch });
     } catch (error: any) {
-      res.status(400).json({ success: false, message: error.message || 'Failed to like user' });
+      if (error instanceof ValidationError) {
+        res.status(400).json({ success: false, message: error.message });
+      } else if (error instanceof NotFoundError) {
+        res.status(404).json({ success: false, message: error.message });
+      } else if (error instanceof AuthenticationError) {
+        res.status(401).json({ success: false, message: error.message });
+      } else {
+        res.status(500).json({ success: false, message: 'Server error' });
+      }
     }
   }
 
@@ -45,8 +54,16 @@ export class UserInteractionController {
       await UserInteractionService.dislikeUser(sourceUserId, targetUserId);
 
       res.status(200).json({ success: true, message: 'User disliked' });
-    } catch (error: any) {
-      res.status(400).json({ success: false, message: error.message || 'Failed to dislike user' });
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        res.status(400).json({ success: false, message: error.message });
+      } else if (error instanceof NotFoundError) {
+        res.status(404).json({ success: false, message: error.message });
+      } else if (error instanceof AuthenticationError) {
+        res.status(401).json({ success: false, message: error.message });
+      } else {
+        res.status(500).json({ success: false, message: 'Server error' });
+      }
     }
   }
 
@@ -69,8 +86,16 @@ export class UserInteractionController {
       await UserInteractionService.blockUser(sourceUserId, targetUserId);
 
       res.status(200).json({ success: true, message: 'User blocked' });
-    } catch (error: any) {
-      res.status(400).json({ success: false, message: error.message || 'Failed to block user' });
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        res.status(400).json({ success: false, message: error.message });
+      } else if (error instanceof NotFoundError) {
+        res.status(404).json({ success: false, message: error.message });
+      } else if (error instanceof AuthenticationError) {
+        res.status(401).json({ success: false, message: error.message });
+      } else {
+        res.status(500).json({ success: false, message: 'Server error' });
+      }
     }
   }
 
@@ -94,7 +119,15 @@ export class UserInteractionController {
 
       res.status(200).json({ success: true, message: 'User unblocked' });
     } catch (error: any) {
-      res.status(400).json({ success: false, message: error.message || 'Failed to unblock user' });
+      if (error instanceof ValidationError) {
+        res.status(400).json({ success: false, message: error.message });
+      } else if (error instanceof NotFoundError) {
+        res.status(404).json({ success: false, message: error.message });
+      } else if (error instanceof AuthenticationError) {
+        res.status(401).json({ success: false, message: error.message });
+      } else {
+        res.status(500).json({ success: false, message: 'Server error' });
+      }
     }
   }
 }

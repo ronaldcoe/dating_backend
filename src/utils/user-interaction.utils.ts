@@ -7,9 +7,30 @@ import { db } from "@/lib/db"
  * - user need to be active
  */
 export async function isValidUserInteraction(sourceUserId: number, targetUserId: number) {
+  if (typeof(targetUserId) != 'number') {
+    return {
+      success: false,
+      message:'User ID must be a number'
+    };
+  }
+
+
   // User cannot like themselves
   if (sourceUserId === targetUserId) {
-    throw new Error('Users cannot interact with themselves');
+    return {
+      success: false,
+      message:'Users cannot interact with themselves'
+    };
+  }
+
+  const targetUser = await db.user.findUnique({
+    where: { id: targetUserId }
+  });
+  if (!targetUser) {
+    return {
+      success: false,
+      message:'Target user not found'
+    };
   }
 
   // User need to be active
@@ -18,7 +39,13 @@ export async function isValidUserInteraction(sourceUserId: number, targetUserId:
   });
 
   if (!user || user.status !== 'ACTIVE') {
-    throw new Error('User not found or not active');
+    return {
+      success: false,
+      messsage:'User not found or not active'
+    };
   }
-  return true;
+  return {
+    success: true,
+    message: 'Valid interaction'
+  };
 }

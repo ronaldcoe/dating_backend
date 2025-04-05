@@ -328,8 +328,8 @@ describe('User Interaction API', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({ targetUserId: 999 });
 
-      expect(response.status).toBe(200);
-      expect(response.body.success).toBe(true);
+      expect(response.status).toBe(400);
+      expect(response.body.success).toBe(false);
     });
 
     it('should handle unblocking a user that is not blocked', async () => {
