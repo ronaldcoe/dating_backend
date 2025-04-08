@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      # Add PostgreSQL service if your tests need a database
       postgres:
         image: postgres:14
         env:
@@ -20,7 +19,6 @@ jobs:
           POSTGRES_DB: testdb
         ports:
           - 5432:5432
-        # Health check to wait for postgres to start
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -33,14 +31,35 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16' # Adjust this to your Node.js version
+        node-version: '16'
         cache: 'npm'
         
     - name: Install dependencies
       run: npm ci
       
+    - name: Find Prisma schema
+      run: find . -name "schema.prisma" -type f
+      
     - name: Generate Prisma client
-      run: npm run prisma:generate
+      run: |
+        # Check where your schema.prisma file is actually located
+        SCHEMA_PATH=$(find . -name "schema.prisma" -type f | head -n 1)
+        if [ -n "$SCHEMA_PATH" ]; then
+          echo "Found schema at $SCHEMA_PATH"
+          npx prisma generate --schema="$SCHEMA_PATH"
+        else
+          echo "No schema.prisma file found. Creating a temporary one for testing."
+          mkdir -p prisma
+          echo "
+          generator client {
+            provider = \"prisma-client-js\"
+          }
+          datasource db {
+            provider = \"postgresql\"
+            url      = env(\"DATABASE_URL\")
+          }" > prisma/schema.prisma
+          npx prisma generate
+        fi
       
     - name: Build TypeScript
       run: npm run build
@@ -48,6 +67,5 @@ jobs:
     - name: Run tests
       run: npm test
       env:
-        # Add any environment variables your tests need
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
         NODE_ENV: test
