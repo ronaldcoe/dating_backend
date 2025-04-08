@@ -1,3 +1,4 @@
+import Joi from 'joi';
 import { db } from "@/lib/db"
 
 /**
@@ -7,10 +8,20 @@ import { db } from "@/lib/db"
  * - user need to be active
  */
 export async function isValidUserInteraction(sourceUserId: number, targetUserId: number) {
-  if (typeof(targetUserId) != 'number') {
+  let schema = Joi.object({
+    sourceUserId: Joi.number().strict().required().messages({
+      'number.base': 'sourceUserId must be a number, not a string'
+    }),
+    targetUserId: Joi.number().strict().required().messages({
+      'number.base': 'targetUserId must be a number, not a string'
+    })
+  }).unknown(false);
+  
+  const result = schema.validate({ sourceUserId, targetUserId }, { convert: false });
+  if (result.error) {
     return {
       success: false,
-      message:'User ID must be a number'
+      message: result.error.details[0].message
     };
   }
 

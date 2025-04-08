@@ -6,6 +6,7 @@ import {
   updateUserProfile } 
 from '@/models/user.model';
 import { db } from '../lib/db';
+import { validateProfileUpdate } from '@/utils/user-profile.utils';
 
 interface ProfileUpdateData {
   name?: string;
@@ -21,6 +22,11 @@ export class UserService {
   static async updateProfile(userId: number, profileData: ProfileUpdateData): Promise<Omit<User, 'password'>> {
     // Validate user exists
     const user = await findUserById(userId);
+
+    const isValid = validateProfileUpdate(profileData);
+    if (!isValid.success) {
+      throw new Error(isValid.message);
+    }
     
     if (!user) {
       throw new Error('User not found');

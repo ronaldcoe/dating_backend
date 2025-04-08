@@ -42,7 +42,7 @@ model User {
   password             String
   role                 Role
   status               UserStatus
-  birthDate            DateTime?                 @map("birth_date")
+  birthDate            DateTime?                 @db.Date @map("birth_date")
   banReason            String?                   @map("ban_reason") @db.Text
   bio                  String?                   @db.Text
   locationLat          Float?                    @map("location_lat")

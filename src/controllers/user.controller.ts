@@ -1,5 +1,4 @@
 import { Request, Response } from 'express'
-import { validateProfileUpdate } from '../utils/validators';
 import { UserService } from '@/services/user.service';
 
 export class UserController {
@@ -17,15 +16,17 @@ export class UserController {
         return;
       }
       
-      // Validate profile data
-      const { error, value } = validateProfileUpdate(req.body);
-      if (error) {
-        res.status(400).json({ success: false, message: error.details[0].message });
-        return;
-      }
+      // // Validate profile data
+      // const { error, value } = validateProfileUpdate(req.body);
+      // if (error) {
+      //   res.status(400).json({ success: false, message: error.details[0].message });
+      //   return;
+      // }
+
+      const data = req.body;
       
       // Update profile
-      const updatedUser = await UserService.updateProfile(userId, value);
+      const updatedUser = await UserService.updateProfile(userId, data);
       
       // Check if profile is now complete
       const isProfileComplete = UserService.isProfileComplete(updatedUser);

@@ -361,8 +361,7 @@
               "description": "Invalid input data",
               "content": {
                 "success": false,
-                "message": "Invalid input data",
-                "errors": ["minAge must be less than maxAge"]
+                "message": "Maximum age must be greater than minimum age"
               }
             },
             "401": {

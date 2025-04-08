@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.service';
-import { validateRegistration, validateLogin, validateProfileUpdate } from '../utils/validators';
+import { validateRegistration, validateLogin } from '../utils/validators';
 
 export class AuthController {
   /**
@@ -79,5 +79,3 @@ export class AuthController {
     }
   }
 }
-
-// No need to export default instance since we're using static methods
