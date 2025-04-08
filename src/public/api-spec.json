@@ -3,45 +3,6 @@
   "description": "This document outlines the specifications for the API endpoints used in our dating application.",
   "version": "1.0.0",
   "basePath": "/api",
-  "definitions": {
-    "User": {
-      "type": "object",
-      "properties": {
-        "id": { "type": "integer" },
-        "name": { "type": "string" },
-        "email": { "type": "string" },
-        "role": { "type": "string" },
-        "status": { "type": "string" },
-        "birthDate": { "type": ["string", "null"], "format": "date-time" },
-        "banReason": { "type": ["string", "null"] },
-        "bio": { "type": ["string", "null"] },
-        "locationLat": { "type": ["number", "null"] },
-        "locationLng": { "type": ["number", "null"] },
-        "gender": { "type": ["string", "null"] },
-        "verified": { "type": "boolean" },
-        "lastActive": { "type": ["string", "null"], "format": "date-time" },
-        "createdAt": { "type": "string", "format": "date-time" },
-        "updatedAt": { "type": "string", "format": "date-time" }
-      }
-    },
-    "UserPreferences": {
-      "type": "object",
-      "properties": {
-        "id": { "type": "integer" },
-        "userId": { "type": "integer" },
-        "minAge": { "type": ["integer", "null"] },
-        "maxAge": { "type": ["integer", "null"] },
-        "distanceRadius": { "type": ["integer", "null"] },
-        "relationshipType": { "type": ["string", "null"] },
-        "theme": { "type": ["string", "null"] },
-        "hiddenProfile": { "type": ["boolean", "null"] },
-        "showOnlineStatus": { "type": ["boolean", "null"] },
-        "notificationsEnabled": { "type": ["boolean", "null"] },
-        "createdAt": { "type": "string", "format": "date-time" },
-        "updatedAt": { "type": "string", "format": "date-time" }
-      }
-    }
-  },
   "resources": [
     {
       "title": "User Authentication",
@@ -70,66 +31,45 @@
           "responses": {
             "200": {
               "description": "Login successful",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": { "type": "boolean" },
-                  "message": { "type": "string" },
-                  "data": {
-                    "type": "object",
-                    "properties": {
-                      "user": { "$ref": "#/definitions/User" },
-                      "token": { "type": "string" },
-                      "refreshToken": { "type": "string" }
-                    }
-                  }
+              "content": {
+                "success": true,
+                "message": "Login successful",
+                "data": {
+                  "user": {
+                    "id": 7,
+                    "name": "Ronald",
+                    "email": "ronaldcoello@gmail.com",
+                    "role": "USER",
+                    "status": "ACTIVE",
+                    "birthDate": null,
+                    "banReason": null,
+                    "bio": null,
+                    "locationLat": null,
+                    "locationLng": null,
+                    "gender": null,
+                    "verified": false,
+                    "lastActive": null,
+                    "createdAt": "2025-04-08T14:44:10.886Z",
+                    "updatedAt": "2025-04-08T14:44:10.886Z"
+                  },
+                  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                 }
               }
             },
             "401": {
               "description": "Invalid credentials",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": { "type": "boolean", "example": false },
-                  "message": { "type": "string", "example": "Invalid email or password" }
-                }
+              "content": {
+                "success": false,
+                "message": "Invalid email or password"
               }
             },
             "429": {
               "description": "Too many login attempts",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": { "type": "boolean", "example": false },
-                  "message": { "type": "string", "example": "Too many login attempts. Please try again later." }
-                }
+              "content": {
+                "success": false,
+                "message": "Too many login attempts. Please try again later."
               }
-            }
-          },
-          "response": {
-            "success": true,
-            "message": "Login successful",
-            "data": {
-              "user": {
-                "id": 7,
-                "name": "Ronald",
-                "email": "ronaldcoello@gmail.com",
-                "role": "USER",
-                "status": "ACTIVE",
-                "birthDate": null,
-                "banReason": null,
-                "bio": null,
-                "locationLat": null,
-                "locationLng": null,
-                "gender": null,
-                "verified": false,
-                "lastActive": null,
-                "createdAt": "2025-04-08T14:44:10.886Z",
-                "updatedAt": "2025-04-08T14:44:10.886Z"
-              },
-              "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImlhdCI6MTc0NDEyMzY0NCwiZXhwIjoxNzQ0MTIzNzA0fQ.mEqT-dtxRZxwCS4fROv60MSdjNmSggIKtFRFQtSV9kg",
-              "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImlhdCI6MTc0NDEyMzY0NCwiZXhwIjoxNzQ5MzA3NjQ0fQ.8vxXeFbrJKb0TBxJhkJ8MeenzUGjfFkC5vSyXCyJMNU"
             }
           }
         },
@@ -163,67 +103,46 @@
           "responses": {
             "201": {
               "description": "User registered successfully",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": { "type": "boolean" },
-                  "message": { "type": "string" },
-                  "data": {
-                    "type": "object",
-                    "properties": {
-                      "user": { "$ref": "#/definitions/User" },
-                      "token": { "type": "string" },
-                      "refreshToken": { "type": "string" }
-                    }
-                  }
+              "content": {
+                "success": true,
+                "message": "User registered successfully",
+                "data": {
+                  "user": {
+                    "id": 7,
+                    "name": "Ronald",
+                    "email": "ronaldcoello@gmail.com",
+                    "role": "USER",
+                    "status": "ACTIVE",
+                    "birthDate": null,
+                    "banReason": null,
+                    "bio": null,
+                    "locationLat": null,
+                    "locationLng": null,
+                    "gender": null,
+                    "verified": false,
+                    "lastActive": null,
+                    "createdAt": "2025-04-08T14:44:10.886Z",
+                    "updatedAt": "2025-04-08T14:44:10.886Z"
+                  },
+                  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                 }
               }
             },
             "400": {
               "description": "Invalid input",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": { "type": "boolean", "example": false },
-                  "message": { "type": "string", "example": "Invalid input data" },
-                  "errors": { "type": "array", "items": { "type": "string" } }
-                }
+              "content": {
+                "success": false,
+                "message": "Invalid input data",
+                "errors": ["Email is required", "Password must be at least 8 characters"]
               }
             },
             "409": {
               "description": "Email already registered",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": { "type": "boolean", "example": false },
-                  "message": { "type": "string", "example": "Email already registered" }
-                }
+              "content": {
+                "success": false,
+                "message": "Email already registered"
               }
-            }
-          },
-          "response": {
-            "success": true,
-            "message": "User registered successfully",
-            "data": {
-              "user": {
-                "id": 7,
-                "name": "Ronald",
-                "email": "ronaldcoello@gmail.com",
-                "role": "USER",
-                "status": "ACTIVE",
-                "birthDate": null,
-                "banReason": null,
-                "bio": null,
-                "locationLat": null,
-                "locationLng": null,
-                "gender": null,
-                "verified": false,
-                "lastActive": null,
-                "createdAt": "2025-04-08T14:44:10.886Z",
-                "updatedAt": "2025-04-08T14:44:10.886Z"
-              },
-              "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImlhdCI6MTc0NDEyMzQ1MCwiZXhwIjoxNzQ0MTIzNTEwfQ.1WYJ7eVoaJUxlLwjKpUav5ESjrv2AIYlkMcqYhn-3mc",
-              "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImlhdCI6MTc0NDEyMzQ1MCwiZXhwIjoxNzQ5MzA3NDUwfQ.d7-iJspTmZcnBByILBAazBPleJ1aPA9kFccJrWz8OqE"
             }
           }
         },
@@ -271,75 +190,52 @@
           "responses": {
             "200": {
               "description": "Profile updated successfully",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": { "type": "boolean" },
-                  "message": { "type": "string" },
-                  "data": {
-                    "type": "object",
-                    "properties": {
-                      "user": { "$ref": "#/definitions/User" },
-                      "isProfileComplete": { "type": "boolean" }
-                    }
-                  }
+              "content": {
+                "success": true,
+                "message": "Profile updated successfully",
+                "data": {
+                  "user": {
+                    "id": 7,
+                    "name": "Ronald",
+                    "email": "ronaldcoello6@gmail.com",
+                    "role": "USER",
+                    "status": "ACTIVE",
+                    "birthDate": "1990-01-01T00:00:00.000Z",
+                    "banReason": null,
+                    "bio": "Hello, I'm Ronald!",
+                    "locationLat": null,
+                    "locationLng": null,
+                    "gender": null,
+                    "verified": false,
+                    "lastActive": "2025-04-08T14:47:24.659Z",
+                    "createdAt": "2025-04-08T14:44:10.886Z",
+                    "updatedAt": "2025-04-08T15:14:14.299Z"
+                  },
+                  "isProfileComplete": false
                 }
               }
             },
             "400": {
               "description": "Invalid input data",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": { "type": "boolean", "example": false },
-                  "message": { "type": "string", "example": "Invalid input data" },
-                  "errors": { "type": "array", "items": { "type": "string" } }
-                }
+              "content": {
+                "success": false,
+                "message": "Invalid input data",
+                "errors": ["Birth date must be a valid date"]
               }
             },
             "401": {
               "description": "Unauthorized",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": { "type": "boolean", "example": false },
-                  "message": { "type": "string", "example": "Authentication required" }
-                }
+              "content": {
+                "success": false,
+                "message": "Authentication required"
               }
             },
             "403": {
               "description": "Forbidden",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": { "type": "boolean", "example": false },
-                  "message": { "type": "string", "example": "You don't have permission to update this profile" }
-                }
+              "content": {
+                "success": false,
+                "message": "You don't have permission to update this profile"
               }
-            }
-          },
-          "response": {
-            "success": true,
-            "message": "Profile updated successfully",
-            "data": {
-              "user": {
-                "id": 7,
-                "name": "Ronald",
-                "email": "ronaldcoello6@gmail.com",
-                "role": "USER",
-                "status": "ACTIVE",
-                "birthDate": "1990-01-01T00:00:00.000Z",
-                "banReason": null,
-                "bio": "Hello, I'm Ronald!",
-                "locationLat": null,
-                "locationLng": null,
-                "gender": null,
-                "verified": false,
-                "lastActive": "2025-04-08T14:47:24.659Z",
-                "createdAt": "2025-04-08T14:44:10.886Z",
-                "updatedAt": "2025-04-08T15:14:14.299Z"
-              },
-              "isProfileComplete": false
             }
           }
         }
@@ -370,52 +266,38 @@
           "responses": {
             "200": {
               "description": "Preferences retrieved successfully",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": { "type": "boolean" },
-                  "message": { "type": "string" },
-                  "data": { "$ref": "#/definitions/UserPreferences" }
+              "content": {
+                "success": true,
+                "message": "Preferences retrieved successfully",
+                "data": {
+                  "id": 2,
+                  "userId": 7,
+                  "minAge": null,
+                  "maxAge": 30,
+                  "distanceRadius": null,
+                  "realtionshipType": null,
+                  "theme": null,
+                  "hiddenProfile": null,
+                  "showOnlineStatus": null,
+                  "notificationsEnabled": null,
+                  "createdAt": "2025-04-08T15:08:55.843Z",
+                  "updatedAt": "2025-04-08T15:09:12.469Z"
                 }
               }
             },
             "401": {
               "description": "Unauthorized",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": { "type": "boolean", "example": false },
-                  "message": { "type": "string", "example": "Authentication required" }
-                }
+              "content": {
+                "success": false,
+                "message": "Authentication required"
               }
             },
             "404": {
               "description": "Preferences not found",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": { "type": "boolean", "example": false },
-                  "message": { "type": "string", "example": "Preferences not found" }
-                }
+              "content": {
+                "success": false,
+                "message": "Preferences not found"
               }
-            }
-          },
-          "response": {
-            "success": true,
-            "message": "Preferences retrieved successfully",
-            "data": {
-              "id": 2,
-              "userId": 7,
-              "minAge": null,
-              "maxAge": 30,
-              "distanceRadius": null,
-              "realtionshipType": null,
-              "theme": null,
-              "hiddenProfile": null,
-              "showOnlineStatus": null,
-              "notificationsEnabled": null,
-              "createdAt": "2025-04-08T15:08:55.843Z",
-              "updatedAt": "2025-04-08T15:09:12.469Z"
             }
           }
         },
@@ -456,53 +338,39 @@
           "responses": {
             "200": {
               "description": "Preferences updated successfully",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": { "type": "boolean" },
-                  "message": { "type": "string" },
-                  "data": { "$ref": "#/definitions/UserPreferences" }
+              "content": {
+                "success": true,
+                "message": "Preferences updated successfully",
+                "data": {
+                  "id": 2,
+                  "userId": 7,
+                  "minAge": null,
+                  "maxAge": 30,
+                  "distanceRadius": null,
+                  "realtionshipType": null,
+                  "theme": null,
+                  "hiddenProfile": null,
+                  "showOnlineStatus": null,
+                  "notificationsEnabled": null,
+                  "createdAt": "2025-04-08T15:08:55.843Z",
+                  "updatedAt": "2025-04-08T15:09:12.469Z"
                 }
               }
             },
             "400": {
               "description": "Invalid input data",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": { "type": "boolean", "example": false },
-                  "message": { "type": "string", "example": "Invalid input data" },
-                  "errors": { "type": "array", "items": { "type": "string" } }
-                }
+              "content": {
+                "success": false,
+                "message": "Invalid input data",
+                "errors": ["minAge must be less than maxAge"]
               }
             },
             "401": {
               "description": "Unauthorized",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": { "type": "boolean", "example": false },
-                  "message": { "type": "string", "example": "Authentication required" }
-                }
+              "content": {
+                "success": false,
+                "message": "Authentication required"
               }
-            }
-          },
-          "response": {
-            "success": true,
-            "message": "Preferences updated successfully",
-            "data": {
-              "id": 2,
-              "userId": 7,
-              "minAge": null,
-              "maxAge": 30,
-              "distanceRadius": null,
-              "realtionshipType": null,
-              "theme": null,
-              "hiddenProfile": null,
-              "showOnlineStatus": null,
-              "notificationsEnabled": null,
-              "createdAt": "2025-04-08T15:08:55.843Z",
-              "updatedAt": "2025-04-08T15:09:12.469Z"
             }
           }
         }

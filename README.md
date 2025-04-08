@@ -240,14 +240,14 @@ To document a new API endpoint:
 
 1. Open /public/api-spec.json
 2. Add your new route definition within the appropriate resource section
-3. Include status codes in the responses object for each possible response type
+3. Include responses with different status codes and example content
 
 Example endpoint structure:
 ```json
 {
-  "type": "GET",
-  "description": "Retrieve user profile",
-  "path": "/users/profile",
+  "type": "POST",
+  "description": "Create a new match",
+  "path": "/matches",
   "headers": [
     {
       "key": "Authorization",
@@ -256,26 +256,36 @@ Example endpoint structure:
       "description": "JWT token"
     }
   ],
+  "body": [
+    {
+      "key": "userId",
+      "type": "integer",
+      "value": 42,
+      "required": true,
+      "description": "ID of the user to match with"
+    }
+  ],
   "responses": {
-    "200": {
-      "description": "Profile retrieved successfully",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "success": { "type": "boolean" },
-          "message": { "type": "string" },
-          "data": { "$ref": "#/definitions/User" }
+    "201": {
+      "description": "Match created successfully",
+      "content": {
+        "success": true,
+        "message": "Match created successfully",
+        "data": {
+          "id": 15,
+          "userId1": 7,
+          "userId2": 42,
+          "status": "PENDING",
+          "createdAt": "2025-04-08T15:30:22.123Z"
         }
       }
     },
-    "401": {
-      "description": "Unauthorized access",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "success": { "type": "boolean", "example": false },
-          "message": { "type": "string", "example": "Authentication required" }
-        }
+    "400": {
+      "description": "Invalid input",
+      "content": {
+        "success": false,
+        "message": "Invalid user ID",
+        "errors": ["User ID must be a positive integer"]
       }
     }
   }
@@ -283,29 +293,26 @@ Example endpoint structure:
 ```
 
 
-### Adding New Models
-To add a new reusable data model:
-
-1. Open /public/api-spec.json
-2. Add your model to the definitions section at the root level
-3. Reference the model using $ref throughout your endpoints
-
-Example model definition:
+### Response Structure
+Each endpoint can have multiple response examples based on status codes:
 
 ```json
-"definitions": {
-  "Message": {
-    "type": "object",
-    "properties": {
-      "id": { "type": "integer" },
-      "content": { "type": "string" },
-      "senderId": { "type": "integer" },
-      "receiverId": { "type": "integer" },
-      "createdAt": { "type": "string", "format": "date-time" }
+"responses": {
+  "200": {
+    "description": "Success message",
+    "content": {
+      // Example response content
+    }
+  },
+  "400": {
+    "description": "Error message",
+    "content": {
+      // Example error content
     }
   }
 }
 ```
+The `content` property contains the exact JSON that will be returned by the API.
 ### Best Practices
 
 1. Be Consistent with Status Codes: Use standard HTTP status codes (200 for success, 400 for bad requests, 401 for unauthorized, etc.)

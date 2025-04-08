@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               `;
             }
             
-            // Responses section (new)
+            // Responses section 
             if (endpoint.responses) {
               mainPanelHtml += `
                 <div class="responses-section">
@@ -256,54 +256,23 @@ document.addEventListener('DOMContentLoaded', async () => {
               
               // Create tab content panels for each response
               Object.entries(endpoint.responses).forEach(([code, response], index) => {
-                let exampleResponse;
-                
-                if (code.startsWith('2')) {
-                  // For successful responses, use the provided example if available
-                  exampleResponse = endpoint.response || {
-                    success: true,
-                    message: response.description,
-                    data: {}
-                  };
-                } else {
-                  // For error responses, use the schema example if available
-                  exampleResponse = {
-                    success: false,
-                    message: response.description
-                  };
-                  
-                  // Add example error details if provided in the schema
-                  if (response.schema && response.schema.properties) {
-                    Object.entries(response.schema.properties).forEach(([key, prop]) => {
-                      if (prop.example) {
-                        exampleResponse[key] = prop.example;
-                      }
-                    });
-                  }
-                }
-                
                 rightPanelHtml += `
                   <div class="response-content ${index === 0 ? 'active' : ''}" 
                     id="${endpointId}-response-${code}">
-                    <pre><code>${JSON.stringify(exampleResponse, null, 2)}</code></pre>
+                    <pre><code>${JSON.stringify(response.content || {}, null, 2)}</code></pre>
                   </div>
                 `;
               });
-            } else if (endpoint.response) {
-              // Fallback to the old response format if no responses object is provided
-              rightPanelHtml += `
-                <pre><code>${JSON.stringify(endpoint.response, null, 2)}</code></pre>
-              `;
             } else {
               // Generic response if nothing is provided
-              const sampleResponse = {};
-              sampleResponse.success = true;
-              sampleResponse.message = 'Operation completed successfully';
+              const sampleResponse = {
+                success: true,
+                message: 'Operation completed successfully'
+              };
               
               if (endpoint.type === 'GET') {
                 sampleResponse.data = { sample: 'data' };
               } else if (endpoint.type === 'DELETE') {
-                sampleResponse.success = true;
                 sampleResponse.message = 'Resource deleted successfully';
               }
               
@@ -416,69 +385,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       sidebarMenu.innerHTML = '<div style="padding: 15px;">No API resources defined.</div>';
     }
-    
-    // Add CSS for status codes
-    const style = document.createElement('style');
-    style.textContent = `
-      .status-code {
-        padding: 3px 6px;
-        border-radius: 4px;
-        font-weight: bold;
-        color: white;
-      }
-      .status-2xx {
-        background-color: #4CAF50; /* Green */
-      }
-      .status-3xx {
-        background-color: #2196F3; /* Blue */
-      }
-      .status-4xx {
-        background-color: #FF9800; /* Orange */
-      }
-      .status-5xx {
-        background-color: #F44336; /* Red */
-      }
-      .response-tabs {
-        display: flex;
-        flex-wrap: wrap;
-        margin-bottom: 10px;
-      }
-      .response-tab {
-        padding: 8px 12px;
-        margin-right: 5px;
-        margin-bottom: 5px;
-        border: 1px solid #ddd;
-        background: #f5f5f5;
-        cursor: pointer;
-        border-radius: 4px;
-        font-size: 13px;
-      }
-      .response-tab.active {
-        background: #e0e0e0;
-        border-color: #bbb;
-        font-weight: bold;
-      }
-      .response-content {
-        display: none;
-      }
-      .response-content.active {
-        display: block;
-      }
-      .badge {
-        background-color: #f0f0f0;
-        border-radius: 3px;
-        padding: 2px 5px;
-        font-size: 12px;
-        font-family: monospace;
-      }
-      .required-badge {
-        background-color: #ff9800;
-        color: white;
-        border-radius: 3px;
-        padding: 2px 5px;
-        font-size: 11px;
-      }
-    `;
     document.head.appendChild(style);
   } catch (error) {
     console.error('Error loading API spec:', error);
