@@ -31,35 +31,40 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16'
+        node-version: '20'
         cache: 'npm'
         
     - name: Install dependencies
       run: npm ci
       
-    - name: Install PostgreSQL client
+    - name: Explore project structure
       run: |
-        sudo apt-get update
-        sudo apt-get install -y postgresql-client
-      
+        echo "Finding Jest setup files..."
+        find . -name "setupDatase.ts" -o -name "setupTestDB.ts" -o -name "*.test.ts"
+        
+        echo "Checking Jest configuration..."
+        if [ -f "jest.config.js" ]; then
+          cat jest.config.js
+        elif [ -f "jest.config.ts" ]; then
+          cat jest.config.ts
+        fi
+        
+        echo "Looking for Prisma schema..."
+        find . -name "schema.prisma"
+        
     - name: Create .env.test file
       run: |
         echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/testdb" > .env.test
         cat .env.test
         
-    - name: Modify setupTestDB for CI
-      run: |
-        sed -i 's/ronaldcoello/postgres/g' src/tests/setupTestDB.ts
-        cat src/tests/setupTestDB.ts
-      
     - name: Generate Prisma client
-      run: npx prisma generate --schema=src/prisma/schema.prisma
+      run: npx prisma generate --schema=$(find . -name "schema.prisma" | head -n 1)
       
     - name: Build TypeScript
       run: npm run build
       
-    - name: Run tests
-      run: npm test
+    - name: Run tests with detailed output
+      run: NODE_ENV=test npx jest --detectOpenHandles --verbose
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
         NODE_ENV: test
