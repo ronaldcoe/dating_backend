@@ -60,9 +60,7 @@ export class UserService {
    * Get current user
    */
   static async getCurrentUser(userId: number): Promise<Omit<User, 'password'>> {
-    const user = await db.user.findUnique({
-      where: { id: userId },
-    });
+    const user = await findUserById(userId);
     
     if (!user) {
       throw new Error('User not found');

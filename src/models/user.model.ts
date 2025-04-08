@@ -36,7 +36,17 @@ export async function updateUserProfile(userId: number, data: {
 
 // find user by id
 export async function findUserById(userId: number) {
-  return db.user.findUnique({
+  const user = await db.user.findUnique({
     where: { id: userId },
   });
+  
+  if (user && user.birthDate) {
+    // Extract just the date portion as a string
+    const dateString = user.birthDate.toISOString().split('T')[0];
+    
+    // Replace the Date object with just the string
+    user.birthDate = dateString as any;
+  }
+  
+  return user;
 }
