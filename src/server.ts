@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { PORT, NODE_ENV } from './config';
 import routes from './routes';
+import path from 'path';
 
 // Create Express app
 const app = express();
@@ -56,12 +57,19 @@ app.use(morgan(NODE_ENV === 'development' ? 'dev' : 'combined')); // Logging
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
+
+app.use('/static', express.static(path.join(__dirname, 'public')));
+
 // API routes
 app.use('/api', routes);
 
 // Health check endpoint
 app.get('/health', (_req, res) => {
   res.status(200).json({ status: 'ok' });
+});
+
+app.get('/docs', (req, res) => {
+  res.sendFile(path.join(__dirname, './docs/docs.html'));
 });
 
 // 404 handler

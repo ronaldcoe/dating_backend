@@ -1,0 +1,38 @@
+{
+  "title": "API Specifications",
+  "description": "This document outlines the specifications for the API endpoints used in our application.",
+  "version": "1.0.0",
+  "basePath": "/api",
+  "resources": [
+    {
+      "title": "User Authentication",
+      "description": "Endpoints for user authentication, including login and registration.",
+      "routes": [
+        {
+          "type": "POST",
+          "description": "User login",
+          "path": "/auth/login",
+          "parameters": [
+            {
+              "name": "email",
+              "type": "string",
+              "required": true,
+              "description": "User's email address"
+            },
+            {
+              "name": "password",
+              "type": "string",
+              "required": true,
+              "description": "User's password"
+            }
+          ],
+          "response": {
+            "status": 200,
+            "message": "Login successful"
+          }
+
+        }
+      ]
+    }
+  ]
+}
