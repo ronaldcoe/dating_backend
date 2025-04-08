@@ -87,33 +87,113 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
               `;
             }
+
+            if (endpoint.headers) {
+              console.log('Headers:', endpoint.headers);
+              mainPanelHtml += `
+                <div class="headers-section">
+                  <h3>Headers</h3>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+              `;
+              
+              endpoint.headers.forEach(header => {
+                mainPanelHtml += `
+                  <tr>
+                    <td>${header.key || ''}</td>
+                    <td>
+                      <span class="badge">
+                        ${header.value || 'string'}
+                      </span>
+                    </td>
+                    <td>${header.required ? '<span class="required-badge">Required</span>' : ''}</td>
+                    <td>${header.description || ''}</td>
+                  </tr>
+                `;
+              });
+              
+              mainPanelHtml += `
+                    </tbody>
+                  </table>
+                </div>
+              `;
+            }
+
+            if (endpoint.body) {
+              console.log('Headers:', endpoint.body);
+              mainPanelHtml += `
+                <div class="headers-section">
+                  <h3>Body</h3>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Key</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+              `;
+              
+              endpoint.body.forEach(header => {
+                mainPanelHtml += `
+                  <tr>
+                    <td>${header.key || ''}</td>
+                    <td>
+                      <span class="badge">
+                        ${header.type || 'string'}
+                      </span>
+                    </td>
+                    <td>${header.required ? '<span class="required-badge">Required</span>' : ''}</td>
+                    <td>${header.description || ''}</td>
+                  </tr>
+                `;
+              });
+              
+              mainPanelHtml += `
+                    </tbody>
+                  </table>
+                </div>
+              `;
+            }
             
             // Request example (only for POST, PUT, PATCH)
-            if (endpoint.parameters && endpoint.parameters.length > 0 && 
+            if (endpoint.body && endpoint.body.length > 0 && 
                 ['POST', 'PUT', 'PATCH'].includes((endpoint.type || '').toUpperCase())) {
               mainPanelHtml += `
                 <div class="request-section">
                   <h3>Request Example</h3>
+                   
               `;
               
               const requestExample = {};
-              endpoint.parameters.forEach(param => {
+              endpoint.body.forEach(param => {
                 if (param.type === 'object') {
-                  requestExample[param.name] = {};
+                  requestExample[param.key] = {};
                 } else if (param.type === 'array') {
-                  requestExample[param.name] = [];
+                  requestExample[param.key] = [];
                 } else if (param.type === 'number') {
-                  requestExample[param.name] = 0;
+                  requestExample[param.key] = 0;
                 } else if (param.type === 'boolean') {
-                  requestExample[param.name] = false;
+                  requestExample[param.key] = false;
                 } else {
-                  requestExample[param.name] = `[${param.name}]`;
+                  requestExample[param.key] = `${param.value}`;
                 }
               });
               
               mainPanelHtml += `
                   <div class="code-sample">
-                    <code>${JSON.stringify(requestExample, null, 2)}</code>
+                    <p>${endpoint.type} ${endpoint.path}</p>
+                    <pre><code>${JSON.stringify(requestExample, null, 2)}</code></pre>
                   </div>
                 </div>
               `;
@@ -127,10 +207,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
             
             // Create a sample response based on endpoint type
-            const sampleResponse = {};
+            let sampleResponse = {};
             if (['GET', 'POST', 'PUT', 'PATCH'].includes((endpoint.type || '').toUpperCase())) {
               if (endpoint.response) {
-                sampleResponse.data = endpoint.response;
+                console.log('Sample response:', endpoint.response);
+                sampleResponse = endpoint.response;
               } else {
                 sampleResponse.success = true;
                 sampleResponse.message = 'Operation completed successfully';

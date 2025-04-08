@@ -213,3 +213,24 @@ You need this permissions to use the IAM user Access key and secret
     ]
 }
 ```
+
+# Documentation
+## Overview
+The application uses a custom documentation system instead of Swagger UI. The documentation is generated and maintained in three key locations:
+
+1. `/docs/doc.html` - The HTML file that serves as the documentation interface when accessing {base_url}/docs
+2. `/public/doc-api.js` - JavaScript file that dynamically generates the documentation content and handles interactive features
+3. `/public/api-spec.json` - JSON configuration file containing all API routes and
+
+## Why Custom Documentation?
+We've chosen to implement a custom documentation solution rather than using Swagger for the following reasons:
+
+- Better visual integration with the application's design
+- More flexible customization options for the UI
+- Improved user experience for API exploration
+- Modern interface compared to Swagger's default UI
+
+## Managing Documentation
+### Viewing Documentation
+After running the application locally, you can access the documentation at:
+`http://localhost:{PORT}/docs`

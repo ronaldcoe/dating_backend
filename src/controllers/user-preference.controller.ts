@@ -13,7 +13,7 @@ export class UserPreferenceController {
 
       const preferences = await UserPreferenceService.getUserPreferences(userId);
 
-      res.status(200).json({ success: true, data: preferences });
+      res.status(200).json({ success: true, message: "Preferences retrieved successfully", data: preferences });
     } catch (error) {
       console.error("Error fetching user preferences:", error);
       res.status(400).json({ success: false, message: error.message || "Failed to get user preferences" });
@@ -31,7 +31,7 @@ export class UserPreferenceController {
 
       const updatedPreferences = await UserPreferenceService.updateUserPreferences(userId, data);
 
-      res.status(200).json({ success: true, data: updatedPreferences });
+      res.status(200).json({ success: true, message: "Preferences updated successfully", data: updatedPreferences });
     } catch (error) {
       if (error instanceof ValidationError) {
         res.status(400).json({ success: false, message: error.message });
