@@ -234,3 +234,88 @@ We've chosen to implement a custom documentation solution rather than using Swag
 ### Viewing Documentation
 After running the application locally, you can access the documentation at:
 `http://localhost:{PORT}/docs`
+
+### Adding New Endpoints
+To document a new API endpoint:
+
+1. Open /public/api-spec.json
+2. Add your new route definition within the appropriate resource section
+3. Include status codes in the responses object for each possible response type
+
+Example endpoint structure:
+```json
+{
+  "type": "GET",
+  "description": "Retrieve user profile",
+  "path": "/users/profile",
+  "headers": [
+    {
+      "key": "Authorization",
+      "value": "Bearer {token}",
+      "required": true,
+      "description": "JWT token"
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Profile retrieved successfully",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/definitions/User" }
+        }
+      }
+    },
+    "401": {
+      "description": "Unauthorized access",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": false },
+          "message": { "type": "string", "example": "Authentication required" }
+        }
+      }
+    }
+  }
+}
+```
+
+
+### Adding New Models
+To add a new reusable data model:
+
+1. Open /public/api-spec.json
+2. Add your model to the definitions section at the root level
+3. Reference the model using $ref throughout your endpoints
+
+Example model definition:
+
+```json
+"definitions": {
+  "Message": {
+    "type": "object",
+    "properties": {
+      "id": { "type": "integer" },
+      "content": { "type": "string" },
+      "senderId": { "type": "integer" },
+      "receiverId": { "type": "integer" },
+      "createdAt": { "type": "string", "format": "date-time" }
+    }
+  }
+}
+```
+### Best Practices
+
+1. Be Consistent with Status Codes: Use standard HTTP status codes (200 for success, 400 for bad requests, 401 for unauthorized, etc.)
+2. Document All Possible Responses: Include both success and error responses for each endpoint
+3. Use $ref for Repeated Structures: Define models once and reference them throughout the documentation
+4. Include Request/Response Examples: Provide clear examples of what the API expects and returns
+5. Keep Documentation Updated: Update the API spec whenever you modify endpoints
+
+### Future Improvements
+Consider implementing these enhancements:
+
+1. Interactive Testing: Add a "Try it out" feature that lets users make API calls directly from the docs
+2. Authentication Setup: Add a global authentication section where users can enter their tokens

@@ -89,7 +89,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (endpoint.headers) {
-              console.log('Headers:', endpoint.headers);
               mainPanelHtml += `
                 <div class="headers-section">
                   <h3>Headers</h3>
@@ -114,7 +113,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         ${header.value || 'string'}
                       </span>
                     </td>
-                    <td>${header.required ? '<span class="required-badge">Required</span>' : ''}</td>
+                    <td>${header.required ? '<span class="required-badge">Required</span>' : 'Optional'}</td>
                     <td>${header.description || ''}</td>
                   </tr>
                 `;
@@ -128,10 +127,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (endpoint.body) {
-              console.log('Headers:', endpoint.body);
               mainPanelHtml += `
-                <div class="headers-section">
-                  <h3>Body</h3>
+                <div class="body-section">
+                  <h3>Request Body</h3>
                   <table>
                     <thead>
                       <tr>
@@ -144,17 +142,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <tbody>
               `;
               
-              endpoint.body.forEach(header => {
+              endpoint.body.forEach(field => {
                 mainPanelHtml += `
                   <tr>
-                    <td>${header.key || ''}</td>
+                    <td>${field.key || ''}</td>
                     <td>
                       <span class="badge">
-                        ${header.type || 'string'}
+                        ${field.type || 'string'}
                       </span>
                     </td>
-                    <td>${header.required ? '<span class="required-badge">Required</span>' : ''}</td>
-                    <td>${header.description || ''}</td>
+                    <td>${field.required ? '<span class="required-badge">Required</span>' : 'Optional'}</td>
+                    <td>${field.description || ''}</td>
                   </tr>
                 `;
               });
@@ -177,16 +175,18 @@ document.addEventListener('DOMContentLoaded', async () => {
               
               const requestExample = {};
               endpoint.body.forEach(param => {
-                if (param.type === 'object') {
+                if (param.value !== undefined) {
+                  requestExample[param.key] = param.value;
+                } else if (param.type === 'object') {
                   requestExample[param.key] = {};
                 } else if (param.type === 'array') {
                   requestExample[param.key] = [];
-                } else if (param.type === 'number') {
+                } else if (param.type === 'number' || param.type === 'integer') {
                   requestExample[param.key] = 0;
                 } else if (param.type === 'boolean') {
                   requestExample[param.key] = false;
                 } else {
-                  requestExample[param.key] = `${param.value}`;
+                  requestExample[param.key] = "";
                 }
               });
               
@@ -199,6 +199,37 @@ document.addEventListener('DOMContentLoaded', async () => {
               `;
             }
             
+            // Responses section (new)
+            if (endpoint.responses) {
+              mainPanelHtml += `
+                <div class="responses-section">
+                  <h3>Response Codes</h3>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Code</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+              `;
+              
+              Object.entries(endpoint.responses).forEach(([code, response]) => {
+                mainPanelHtml += `
+                  <tr>
+                    <td><span class="status-code status-${code.charAt(0)}xx">${code}</span></td>
+                    <td>${response.description || ''}</td>
+                  </tr>
+                `;
+              });
+              
+              mainPanelHtml += `
+                    </tbody>
+                  </table>
+                </div>
+              `;
+            }
+            
             mainPanelHtml += `</div>`;
             
             // Create right panel content (response examples)
@@ -206,30 +237,82 @@ document.addEventListener('DOMContentLoaded', async () => {
               <div class="response-panel-content" id="${endpointId}-response">
             `;
             
-            // Create a sample response based on endpoint type
-            let sampleResponse = {};
-            if (['GET', 'POST', 'PUT', 'PATCH'].includes((endpoint.type || '').toUpperCase())) {
-              if (endpoint.response) {
-                console.log('Sample response:', endpoint.response);
-                sampleResponse = endpoint.response;
-              } else {
-                sampleResponse.success = true;
-                sampleResponse.message = 'Operation completed successfully';
+            // Display different response examples based on status codes
+            if (endpoint.responses) {
+              rightPanelHtml += `<div class="response-tabs">`;
+              
+              // Create tabs for each response code
+              Object.keys(endpoint.responses).forEach((code, index) => {
+                rightPanelHtml += `
+                  <button class="response-tab ${index === 0 ? 'active' : ''}" 
+                    data-code="${code}" 
+                    data-endpoint="${endpointId}">
+                    ${code} ${endpoint.responses[code].description}
+                  </button>
+                `;
+              });
+              
+              rightPanelHtml += `</div>`;
+              
+              // Create tab content panels for each response
+              Object.entries(endpoint.responses).forEach(([code, response], index) => {
+                let exampleResponse;
                 
-                // For GET requests, add a data field with sample data
-                if (endpoint.type === 'GET') {
-                  sampleResponse.data = { sample: 'data' };
+                if (code.startsWith('2')) {
+                  // For successful responses, use the provided example if available
+                  exampleResponse = endpoint.response || {
+                    success: true,
+                    message: response.description,
+                    data: {}
+                  };
+                } else {
+                  // For error responses, use the schema example if available
+                  exampleResponse = {
+                    success: false,
+                    message: response.description
+                  };
+                  
+                  // Add example error details if provided in the schema
+                  if (response.schema && response.schema.properties) {
+                    Object.entries(response.schema.properties).forEach(([key, prop]) => {
+                      if (prop.example) {
+                        exampleResponse[key] = prop.example;
+                      }
+                    });
+                  }
                 }
-              }
-            } else if (endpoint.type === 'DELETE') {
+                
+                rightPanelHtml += `
+                  <div class="response-content ${index === 0 ? 'active' : ''}" 
+                    id="${endpointId}-response-${code}">
+                    <pre><code>${JSON.stringify(exampleResponse, null, 2)}</code></pre>
+                  </div>
+                `;
+              });
+            } else if (endpoint.response) {
+              // Fallback to the old response format if no responses object is provided
+              rightPanelHtml += `
+                <pre><code>${JSON.stringify(endpoint.response, null, 2)}</code></pre>
+              `;
+            } else {
+              // Generic response if nothing is provided
+              const sampleResponse = {};
               sampleResponse.success = true;
-              sampleResponse.message = 'Resource deleted successfully';
+              sampleResponse.message = 'Operation completed successfully';
+              
+              if (endpoint.type === 'GET') {
+                sampleResponse.data = { sample: 'data' };
+              } else if (endpoint.type === 'DELETE') {
+                sampleResponse.success = true;
+                sampleResponse.message = 'Resource deleted successfully';
+              }
+              
+              rightPanelHtml += `
+                <pre><code>${JSON.stringify(sampleResponse, null, 2)}</code></pre>
+              `;
             }
             
-            rightPanelHtml += `
-                <pre><code>${JSON.stringify(sampleResponse, null, 2)}</code></pre>
-              </div>
-            `;
+            rightPanelHtml += `</div>`;
           });
         }
         
@@ -241,13 +324,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Add endpoint details to main panel (after welcome message)
       const welcomeDiv = mainPanel.querySelector('.endpoint-welcome');
       mainPanel.innerHTML = '';
-      mainPanel.appendChild(welcomeDiv);
+      if (welcomeDiv) {
+        mainPanel.appendChild(welcomeDiv);
+      }
       mainPanel.innerHTML += mainPanelHtml;
       
       // Add response examples to right panel (after welcome message)
       const responseWelcomeDiv = rightPanel.querySelector('.response-welcome');
       rightPanel.innerHTML = '';
-      rightPanel.appendChild(responseWelcomeDiv);
+      if (responseWelcomeDiv) {
+        rightPanel.appendChild(responseWelcomeDiv);
+      }
       rightPanel.innerHTML += rightPanelHtml;
       
       // Add click event listeners to sidebar endpoint links
@@ -256,8 +343,11 @@ document.addEventListener('DOMContentLoaded', async () => {
           const endpointId = link.getAttribute('data-endpoint-id');
           
           // Hide welcome messages
-          document.querySelector('.endpoint-welcome').style.display = 'none';
-          document.querySelector('.response-welcome').style.display = 'none';
+          const welcomeElem = document.querySelector('.endpoint-welcome');
+          const responseWelcomeElem = document.querySelector('.response-welcome');
+          
+          if (welcomeElem) welcomeElem.style.display = 'none';
+          if (responseWelcomeElem) responseWelcomeElem.style.display = 'none';
           
           // Deactivate all endpoints and sidebar links
           document.querySelectorAll('.endpoint-detail').forEach(el => el.classList.remove('active'));
@@ -265,43 +355,131 @@ document.addEventListener('DOMContentLoaded', async () => {
           document.querySelectorAll('.endpoint-link').forEach(el => el.classList.remove('active'));
           
           // Activate the selected endpoint
-          document.getElementById(`${endpointId}-detail`).classList.add('active');
-          document.getElementById(`${endpointId}-response`).classList.add('active');
+          const detailElem = document.getElementById(`${endpointId}-detail`);
+          const responseElem = document.getElementById(`${endpointId}-response`);
+          
+          if (detailElem) detailElem.classList.add('active');
+          if (responseElem) responseElem.classList.add('active');
           link.classList.add('active');
+        });
+      });
+      
+      // Add click event listeners to response tabs
+      document.querySelectorAll('.response-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const code = tab.getAttribute('data-code');
+          const endpointId = tab.getAttribute('data-endpoint');
+          
+          // Deactivate all tabs and response content panels for this endpoint
+          document.querySelectorAll(`.response-tab[data-endpoint="${endpointId}"]`).forEach(t => 
+            t.classList.remove('active'));
+          document.querySelectorAll(`[id^="${endpointId}-response-"]`).forEach(c => 
+            c.classList.remove('active'));
+          
+          // Activate the selected tab and content
+          tab.classList.add('active');
+          const responseContentElem = document.getElementById(`${endpointId}-response-${code}`);
+          if (responseContentElem) responseContentElem.classList.add('active');
         });
       });
       
       // Setup search functionality
       const searchInput = document.getElementById('search-input');
-      searchInput.addEventListener('input', () => {
-        const searchTerm = searchInput.value.toLowerCase();
-        
-        document.querySelectorAll('.endpoint-link').forEach(link => {
-          const method = link.querySelector('.endpoint-link-method').textContent.toLowerCase();
-          const path = link.querySelector('.endpoint-link-path').textContent.toLowerCase();
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          const searchTerm = searchInput.value.toLowerCase();
           
-          if (method.includes(searchTerm) || path.includes(searchTerm)) {
-            link.style.display = 'flex';
+          document.querySelectorAll('.endpoint-link').forEach(link => {
+            const method = link.querySelector('.endpoint-link-method').textContent.toLowerCase();
+            const path = link.querySelector('.endpoint-link-path').textContent.toLowerCase();
             
-            // Make sure the resource group is also visible
-            const resourceGroup = link.closest('.resource-group');
-            resourceGroup.style.display = 'block';
-          } else {
-            link.style.display = 'none';
-          }
+            if (method.includes(searchTerm) || path.includes(searchTerm)) {
+              link.style.display = 'flex';
+              
+              // Make sure the resource group is also visible
+              const resourceGroup = link.closest('.resource-group');
+              if (resourceGroup) resourceGroup.style.display = 'block';
+            } else {
+              link.style.display = 'none';
+            }
+          });
+          
+          // Hide empty resource groups
+          document.querySelectorAll('.resource-group').forEach(group => {
+            const visibleEndpoints = group.querySelectorAll('.endpoint-link[style="display: flex"]').length;
+            if (visibleEndpoints === 0) {
+              group.style.display = 'none';
+            }
+          });
         });
-        
-        // Hide empty resource groups
-        document.querySelectorAll('.resource-group').forEach(group => {
-          const visibleEndpoints = group.querySelectorAll('.endpoint-link[style="display: flex"]').length;
-          if (visibleEndpoints === 0) {
-            group.style.display = 'none';
-          }
-        });
-      });
+      }
     } else {
       sidebarMenu.innerHTML = '<div style="padding: 15px;">No API resources defined.</div>';
     }
+    
+    // Add CSS for status codes
+    const style = document.createElement('style');
+    style.textContent = `
+      .status-code {
+        padding: 3px 6px;
+        border-radius: 4px;
+        font-weight: bold;
+        color: white;
+      }
+      .status-2xx {
+        background-color: #4CAF50; /* Green */
+      }
+      .status-3xx {
+        background-color: #2196F3; /* Blue */
+      }
+      .status-4xx {
+        background-color: #FF9800; /* Orange */
+      }
+      .status-5xx {
+        background-color: #F44336; /* Red */
+      }
+      .response-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+      .response-tab {
+        padding: 8px 12px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        border: 1px solid #ddd;
+        background: #f5f5f5;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 13px;
+      }
+      .response-tab.active {
+        background: #e0e0e0;
+        border-color: #bbb;
+        font-weight: bold;
+      }
+      .response-content {
+        display: none;
+      }
+      .response-content.active {
+        display: block;
+      }
+      .badge {
+        background-color: #f0f0f0;
+        border-radius: 3px;
+        padding: 2px 5px;
+        font-size: 12px;
+        font-family: monospace;
+      }
+      .required-badge {
+        background-color: #ff9800;
+        color: white;
+        border-radius: 3px;
+        padding: 2px 5px;
+        font-size: 11px;
+      }
+    `;
+    document.head.appendChild(style);
   } catch (error) {
     console.error('Error loading API spec:', error);
     document.getElementById('api-description').textContent = 'Error loading API documentation. Please try again later.';

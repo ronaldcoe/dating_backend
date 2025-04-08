@@ -1,8 +1,47 @@
 {
-  "title": "API Docummentation",
-  "description": "This document outlines the specifications for the API endpoints used in our application.",
+  "title": "API Documentation",
+  "description": "This document outlines the specifications for the API endpoints used in our dating application.",
   "version": "1.0.0",
   "basePath": "/api",
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string" },
+        "status": { "type": "string" },
+        "birthDate": { "type": ["string", "null"], "format": "date-time" },
+        "banReason": { "type": ["string", "null"] },
+        "bio": { "type": ["string", "null"] },
+        "locationLat": { "type": ["number", "null"] },
+        "locationLng": { "type": ["number", "null"] },
+        "gender": { "type": ["string", "null"] },
+        "verified": { "type": "boolean" },
+        "lastActive": { "type": ["string", "null"], "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "UserPreferences": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer" },
+        "userId": { "type": "integer" },
+        "minAge": { "type": ["integer", "null"] },
+        "maxAge": { "type": ["integer", "null"] },
+        "distanceRadius": { "type": ["integer", "null"] },
+        "relationshipType": { "type": ["string", "null"] },
+        "theme": { "type": ["string", "null"] },
+        "hiddenProfile": { "type": ["boolean", "null"] },
+        "showOnlineStatus": { "type": ["boolean", "null"] },
+        "notificationsEnabled": { "type": ["boolean", "null"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
   "resources": [
     {
       "title": "User Authentication",
@@ -15,19 +54,59 @@
           "body": [
             {
               "key": "email",
-              "type": "String",
+              "type": "string",
               "value": "ronaldcoello85@gmail.com",
               "required": true,
               "description": "User's email address"
             },
             {
               "key": "password",
-              "type": "String",
+              "type": "string",
               "value": "StrongPassword123",
               "required": true,
               "description": "User's password"
             }
           ],
+          "responses": {
+            "200": {
+              "description": "Login successful",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "message": { "type": "string" },
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "user": { "$ref": "#/definitions/User" },
+                      "token": { "type": "string" },
+                      "refreshToken": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Invalid credentials",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean", "example": false },
+                  "message": { "type": "string", "example": "Invalid email or password" }
+                }
+              }
+            },
+            "429": {
+              "description": "Too many login attempts",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean", "example": false },
+                  "message": { "type": "string", "example": "Too many login attempts. Please try again later." }
+                }
+              }
+            }
+          },
           "response": {
             "success": true,
             "message": "Login successful",
@@ -53,7 +132,6 @@
               "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImlhdCI6MTc0NDEyMzY0NCwiZXhwIjoxNzQ5MzA3NjQ0fQ.8vxXeFbrJKb0TBxJhkJ8MeenzUGjfFkC5vSyXCyJMNU"
             }
           }
-
         },
         {
           "type": "POST",
@@ -82,6 +160,47 @@
               "description": "User's password"
             }
           ],
+          "responses": {
+            "201": {
+              "description": "User registered successfully",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "message": { "type": "string" },
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "user": { "$ref": "#/definitions/User" },
+                      "token": { "type": "string" },
+                      "refreshToken": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid input",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean", "example": false },
+                  "message": { "type": "string", "example": "Invalid input data" },
+                  "errors": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            },
+            "409": {
+              "description": "Email already registered",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean", "example": false },
+                  "message": { "type": "string", "example": "Email already registered" }
+                }
+              }
+            }
+          },
           "response": {
             "success": true,
             "message": "User registered successfully",
@@ -118,8 +237,8 @@
               "value": "Bearer {token}",
               "required": true,
               "description": "Authorization token JWT"
-
-            },{
+            },
+            {
               "key": "x-refresh-token",
               "value": "{token}",
               "required": true,
@@ -130,25 +249,75 @@
             {
               "key": "name",
               "value": "Ronald",
-              "type": "String",
+              "type": "string",
               "required": false,
               "description": "User's name"
             },
             {
               "key": "birthDate",
               "value": "1990-01-01",
-              "type": "Date",
+              "type": "date",
               "required": false,
               "description": "User's birth date"
             },
             {
               "key": "bio",
               "value": "Hello, I'm Ronald!",
-              "type": "String",
+              "type": "string",
               "required": false,
               "description": "User's bio"
             }
           ],
+          "responses": {
+            "200": {
+              "description": "Profile updated successfully",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "message": { "type": "string" },
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "user": { "$ref": "#/definitions/User" },
+                      "isProfileComplete": { "type": "boolean" }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid input data",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean", "example": false },
+                  "message": { "type": "string", "example": "Invalid input data" },
+                  "errors": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean", "example": false },
+                  "message": { "type": "string", "example": "Authentication required" }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean", "example": false },
+                  "message": { "type": "string", "example": "You don't have permission to update this profile" }
+                }
+              }
+            }
+          },
           "response": {
             "success": true,
             "message": "Profile updated successfully",
@@ -169,8 +338,8 @@
                 "lastActive": "2025-04-08T14:47:24.659Z",
                 "createdAt": "2025-04-08T14:44:10.886Z",
                 "updatedAt": "2025-04-08T15:14:14.299Z"
-            },
-            "isProfileComplete": false
+              },
+              "isProfileComplete": false
             }
           }
         }
@@ -190,14 +359,47 @@
               "value": "Bearer {token}",
               "required": true,
               "description": "Authorization token JWT"
-
-            },{
+            },
+            {
               "key": "x-refresh-token",
               "value": "{token}",
               "required": true,
               "description": "Refresh token JWT"
             }
           ],
+          "responses": {
+            "200": {
+              "description": "Preferences retrieved successfully",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "message": { "type": "string" },
+                  "data": { "$ref": "#/definitions/UserPreferences" }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean", "example": false },
+                  "message": { "type": "string", "example": "Authentication required" }
+                }
+              }
+            },
+            "404": {
+              "description": "Preferences not found",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean", "example": false },
+                  "message": { "type": "string", "example": "Preferences not found" }
+                }
+              }
+            }
+          },
           "response": {
             "success": true,
             "message": "Preferences retrieved successfully",
@@ -219,7 +421,7 @@
         },
         {
           "type": "PATCH",
-          "description": "Update user preferences. This preferences are used to customize  the swipe experience.",
+          "description": "Update user preferences. These preferences are used to customize the swipe experience.",
           "path": "/users/preferences",
           "headers": [
             {
@@ -227,8 +429,8 @@
               "value": "Bearer {token}",
               "required": true,
               "description": "Authorization token JWT"
-
-            },{
+            },
+            {
               "key": "x-refresh-token",
               "value": "{token}",
               "required": true,
@@ -238,19 +440,53 @@
           "body": [
             {
               "key": "maxAge",
-              "type": "Integer",
+              "type": "integer",
               "value": 30,
               "required": false,
-              "description": "ID of the user"
+              "description": "Maximum age preference for matches"
             },
             {
               "key": "minAge",
-              "type": "Integer",
+              "type": "integer",
               "value": 28,
               "required": false,
-              "description": "User preferences object"
+              "description": "Minimum age preference for matches"
             }
           ],
+          "responses": {
+            "200": {
+              "description": "Preferences updated successfully",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "message": { "type": "string" },
+                  "data": { "$ref": "#/definitions/UserPreferences" }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid input data",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean", "example": false },
+                  "message": { "type": "string", "example": "Invalid input data" },
+                  "errors": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean", "example": false },
+                  "message": { "type": "string", "example": "Authentication required" }
+                }
+              }
+            }
+          },
           "response": {
             "success": true,
             "message": "Preferences updated successfully",
