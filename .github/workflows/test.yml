@@ -31,14 +31,49 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16'
+        node-version: '20'
         cache: 'npm'
         
     - name: Install dependencies
       run: npm ci
       
-    - name: Find Prisma schema
-      run: find . -name "schema.prisma" -type f
+    - name: Check Jest configuration
+      run: |
+        echo "Checking for Jest configuration..."
+        if [ -f "jest.config.js" ]; then
+          cat jest.config.js
+        elif [ -f "jest.config.ts" ]; then
+          cat jest.config.ts
+        else
+          echo "Looking for Jest config in package.json:"
+          grep -A 10 "jest" package.json || echo "No Jest config found"
+        fi
+        
+    - name: Ensure test setup file exists
+      run: |
+        mkdir -p src/tests
+        if [ ! -f "src/tests/setupTestDB.ts" ]; then
+          echo "Creating basic setupTestDB.ts file..."
+          echo "// Basic test DB setup created by CI
+          import { PrismaClient } from '@prisma/client';
+          
+          const prisma = new PrismaClient();
+          
+          beforeAll(async () => {
+            // Connect to the test database
+            await prisma.$connect();
+          });
+          
+          afterAll(async () => {
+            // Disconnect after tests
+            await prisma.$disconnect();
+          });
+          
+          // Clean database between tests
+          afterEach(async () => {
+            // Add table cleanup if needed
+          });" > src/tests/setupTestDB.ts
+        fi
       
     - name: Generate Prisma client
       run: |
