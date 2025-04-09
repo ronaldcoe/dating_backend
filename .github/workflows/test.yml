@@ -31,40 +31,49 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '20'
+        node-version: '16'
         cache: 'npm'
         
     - name: Install dependencies
       run: npm ci
       
-    - name: Explore project structure
+    - name: Install PostgreSQL client
       run: |
-        echo "Finding Jest setup files..."
-        find . -name "setupDatase.ts" -o -name "setupTestDB.ts" -o -name "*.test.ts"
-        
-        echo "Checking Jest configuration..."
-        if [ -f "jest.config.js" ]; then
-          cat jest.config.js
-        elif [ -f "jest.config.ts" ]; then
-          cat jest.config.ts
+        sudo apt-get update
+        sudo apt-get install -y postgresql-client
+      
+    - name: Fix test setup file case sensitivity
+      run: |
+        if [ -f "src/tests/setupTestDb.ts" ] && [ ! -f "src/tests/setupTestDB.ts" ]; then
+          echo "Found setupTestDb.ts (lowercase 'b'), creating copy with correct case setupTestDB.ts"
+          cp src/tests/setupTestDb.ts src/tests/setupTestDB.ts
         fi
         
-        echo "Looking for Prisma schema..."
-        find . -name "schema.prisma"
+        # Modify the setup file to use postgres user instead of ronaldcoello
+        if [ -f "src/tests/setupTestDB.ts" ]; then
+          sed -i 's/ronaldcoello/postgres/g' src/tests/setupTestDB.ts
+        fi
         
     - name: Create .env.test file
       run: |
         echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/testdb" > .env.test
-        cat .env.test
         
     - name: Generate Prisma client
-      run: npx prisma generate --schema=$(find . -name "schema.prisma" | head -n 1)
+      run: |
+        SCHEMA_PATH=$(find . -name "schema.prisma" | head -n 1)
+        if [ -n "$SCHEMA_PATH" ]; then
+          echo "Found schema at $SCHEMA_PATH"
+          npx prisma generate --schema="$SCHEMA_PATH"
+        else
+          echo "Schema not found"
+          exit 1
+        fi
       
     - name: Build TypeScript
       run: npm run build
       
-    - name: Run tests with detailed output
-      run: NODE_ENV=test npx jest --detectOpenHandles --verbose
+    - name: Run tests
+      run: npm test
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
         NODE_ENV: test
