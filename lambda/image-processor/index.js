@@ -193,7 +193,10 @@ async function moderateImage(bucket, key) {
       const forbiddenCategories = [
         'Explicit Nudity', 
         'Nudity', 
-        'Graphic Male Nudity', 
+        'Graphic Male Nudity',
+        'Alcohol',
+        'Drugs',
+        'Tobacco', 
         'Graphic Female Nudity', 
         'Sexual Activity', 
         'Violence', 

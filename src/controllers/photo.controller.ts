@@ -504,22 +504,36 @@ export class PhotoController {
             where: { id: parseInt(photoId) },
             select: { originalUrl: true }
           });
-  
-          if (photo && photo.originalUrl) {
-            // Extract the S3 key from the URL
-            const originalKey = photo.originalUrl.split('.amazonaws.com/')[1];
+
+          /**
+           * Uncomment this block if you want to delete the original image from S3
+           * when the photo is rejected or failed. We decided to keep the original
+           * image for record-keeping purposes, but you can uncomment this if needed.
+           */
+          
+          // if (photo && photo.originalUrl) {
+          //   // Extract the S3 key from the URL
+          //   const originalKey = photo.originalUrl.split('.amazonaws.com/')[1];
             
-            // Delete the original image from S3
-            const s3 = new S3();
-            await s3.deleteObject({
-              Bucket: process.env.S3_BUCKET_NAME || 'datingapp-staging',
-              Key: originalKey
-            });
-          }
+          //   // Delete the original image from S3
+          //   const s3 = new S3();
+          //   await s3.deleteObject({
+          //     Bucket: process.env.S3_BUCKET_NAME || 'datingapp-staging',
+          //     Key: originalKey
+          //   });
+          // }
   
           // Delete the photo record from the database
-          await db.photo.delete({
-            where: { id: parseInt(photoId) }
+          // await db.photo.delete({
+          //   where: { id: parseInt(photoId) }
+          // });
+          await db.photo.update({
+            where: { id: parseInt(photoId) },
+            data: {
+              status,
+              moderationMessage: moderationMessage || null,
+              moderatedAt: new Date().toISOString()
+            }
           });
         } catch (error) {
           // Continue processing even if cleanup fails
