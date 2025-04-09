@@ -31,7 +31,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16'
+        node-version: '20'
         cache: 'npm'
         
     - name: Install dependencies
@@ -42,16 +42,28 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y postgresql-client
       
-    - name: Fix test setup file case sensitivity
+    - name: Fix Jest configuration
       run: |
-        if [ -f "src/tests/setupTestDb.ts" ] && [ ! -f "src/tests/setupTestDB.ts" ]; then
-          echo "Found setupTestDb.ts (lowercase 'b'), creating copy with correct case setupTestDB.ts"
-          cp src/tests/setupTestDb.ts src/tests/setupTestDB.ts
+        # Check Jest config to find the setupFilesAfterEnv path
+        if [ -f "jest.config.js" ]; then
+          # Update Jest config to use the correct case (setupTestDb.ts instead of setupTestDB.ts)
+          sed -i 's/setupTestDB\.ts/setupTestDb.ts/g' jest.config.js
+          cat jest.config.js
+        elif [ -f "jest.config.ts" ]; then
+          sed -i 's/setupTestDB\.ts/setupTestDb.ts/g' jest.config.ts
+          cat jest.config.ts
+        else
+          # Look in package.json if no jest.config file exists
+          sed -i 's/setupTestDB\.ts/setupTestDb.ts/g' package.json
+          grep -A 10 "jest" package.json || echo "No Jest config found in package.json"
         fi
         
+    - name: Update setup file for CI
+      run: |
         # Modify the setup file to use postgres user instead of ronaldcoello
-        if [ -f "src/tests/setupTestDB.ts" ]; then
-          sed -i 's/ronaldcoello/postgres/g' src/tests/setupTestDB.ts
+        if [ -f "src/tests/setupTestDb.ts" ]; then
+          sed -i 's/ronaldcoello/postgres/g' src/tests/setupTestDb.ts
+          cat src/tests/setupTestDb.ts
         fi
         
     - name: Create .env.test file
@@ -68,9 +80,6 @@ jobs:
           echo "Schema not found"
           exit 1
         fi
-      
-    - name: Build TypeScript
-      run: npm run build
       
     - name: Run tests
       run: npm test
