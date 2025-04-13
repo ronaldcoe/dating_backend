@@ -1,0 +1,33 @@
+{
+  "title": "Interests",
+  "description": "Endpoints for managing user interests.",
+  "routes": [
+    {
+      "type": "GET",
+      "description": "Get user interests",
+      "path": "/users/interests",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/users/interests"
+      },
+      "responses": {
+        "200": {
+
+        }
+      }
+    }
+  ]
+}

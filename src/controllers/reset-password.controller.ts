@@ -21,6 +21,7 @@ export class ResetPasswordController {
       }
       
       // Request password reset
+      // TODO: Sen the email with the token
       const token = await ResetPasswordService.createResetPasswordToken(email);
 
       res.status(200).json({
@@ -96,7 +97,7 @@ export class ResetPasswordController {
       
       res.status(200).json({
         success: true,
-        message: "Password reset successful",
+        message: "Password reset successfully",
       });
     } catch (error: any) {
       res.status(400).json({

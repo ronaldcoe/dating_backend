@@ -36,7 +36,19 @@ export async function updateUserProfile(userId: number, data: {
 
 // find user by id
 export async function findUserById(userId: number) {
-  return db.user.findUnique({
+  const user = await db.user.findUnique({
     where: { id: userId },
   });
+
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  const { password: _, ...userWithoutPassword } = user;
+    
+  return userWithoutPassword
 }

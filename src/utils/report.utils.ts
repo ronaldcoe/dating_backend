@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { findUserById } from "@/models/user.model";
 
 /**
  * Validate if report is valid
@@ -12,5 +13,13 @@ export async function isValidReport(sourceUserId: number, targetUserId: number) 
   if (sourceUserId === targetUserId) {
     throw new Error('Users cannot report themselves');
   }
+
+  // targetUser must  exsist in the database
+  try {
+    await findUserById(targetUserId);
+  } catch (error) {
+    throw new Error('Target user does not exist');
+  }
+
   return true;
 }

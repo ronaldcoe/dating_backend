@@ -1,0 +1,134 @@
+{
+  "title": "User Preferences",
+  "description": "Endpoints for managing user preferences.",
+  "routes": [
+    {
+      "type": "GET",
+      "description": "Get user preferences",
+      "path": "/users/preferences",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Preferences retrieved successfully",
+          "content": {
+            "success": true,
+            "message": "Preferences retrieved successfully",
+            "data": {
+              "id": 2,
+              "userId": 7,
+              "minAge": null,
+              "maxAge": 30,
+              "distanceRadius": null,
+              "realtionshipType": null,
+              "theme": null,
+              "hiddenProfile": null,
+              "showOnlineStatus": null,
+              "notificationsEnabled": null,
+              "createdAt": "2025-04-08T15:08:55.843Z",
+              "updatedAt": "2025-04-08T15:09:12.469Z"
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Authentication required"
+          }
+        },
+        "404": {
+          "description": "Preferences not found",
+          "content": {
+            "success": false,
+            "message": "Preferences not found"
+          }
+        }
+      }
+    },
+    {
+      "type": "PATCH",
+      "description": "Update user preferences. These preferences are used to customize the swipe experience.",
+      "path": "/users/preferences",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "body": [
+        {
+          "key": "maxAge",
+          "type": "integer",
+          "value": 30,
+          "required": false,
+          "description": "Maximum age preference for matches"
+        },
+        {
+          "key": "minAge",
+          "type": "integer",
+          "value": 28,
+          "required": false,
+          "description": "Minimum age preference for matches"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Preferences updated successfully",
+          "content": {
+            "success": true,
+            "message": "Preferences updated successfully",
+            "data": {
+              "id": 2,
+              "userId": 7,
+              "minAge": null,
+              "maxAge": 30,
+              "distanceRadius": null,
+              "realtionshipType": null,
+              "theme": null,
+              "hiddenProfile": null,
+              "showOnlineStatus": null,
+              "notificationsEnabled": null,
+              "createdAt": "2025-04-08T15:08:55.843Z",
+              "updatedAt": "2025-04-08T15:09:12.469Z"
+            }
+          }
+        },
+        "400": {
+          "description": "Invalid input data",
+          "content": {
+            "success": false,
+            "message": "Maximum age must be greater than minimum age"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Authentication required"
+          }
+        }
+      }
+    }
+  ]
+}

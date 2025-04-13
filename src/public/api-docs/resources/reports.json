@@ -1,0 +1,67 @@
+{
+  "title": "Reports",
+  "description": "Endpoints for managing user reports.",
+  "routes": [
+    {
+      "type": "POST",
+      "description": "Report a user. This endpoint allows users to report other users for inappropriate behavior or content.",
+      "path": "/reports/new",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/reports/new",
+        "body": [
+          {
+            "key": "targetUserId",
+            "value": 8,
+            "type": "number",
+            "required": true,
+            "description": "ID of the user to report"
+          },
+          {
+            "key": "reason",
+            "value": "Inappropriate behavior",
+            "type": "string",
+            "required": true,
+            "description": "Reason for reporting the user"
+          }
+        ]
+      },
+      "responses": {
+        "200": {
+          "description": "User reported successfully",
+          "content": {
+            "success": true,
+            "message": "Report created"
+          }
+        },
+        "400": {
+          "description": "User not found",
+          "content": {
+            "success": false,
+            "message": "Target user does not exist"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        }
+      }
+    }
+  ]
+}

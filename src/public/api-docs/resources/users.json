@@ -1,0 +1,159 @@
+{
+  "title": "User",
+  "description": "Endpoints for managing user accounts.",
+  "routes": [
+    {
+      "type": "PUT",
+      "description": "Update user profile",
+      "path": "/users/profile",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample":{
+        "url": "/users/profile",
+        "body":[
+          {
+            "key": "name",
+            "value": "Ronald",
+            "type": "string",
+            "required": false,
+            "description": "User's name"
+          },
+          {
+            "key": "birthDate",
+            "value": "1990-01-01",
+            "type": "date",
+            "required": false,
+            "description": "User's birth date"
+          },
+          {
+            "key": "bio",
+            "value": "Hello, I'm Ronald!",
+            "type": "string",
+            "required": false,
+            "description": "User's bio"
+          }
+        ]
+      },
+      "responses": {
+        "200": {
+          "description": "Profile updated successfully",
+          "content": {
+            "success": true,
+            "message": "Profile updated successfully",
+            "data": {
+              "user": {
+                "id": 7,
+                "name": "Ronald",
+                "email": "ronaldcoello6@gmail.com",
+                "role": "USER",
+                "status": "ACTIVE",
+                "birthDate": "1990-01-01T00:00:00.000Z",
+                "banReason": null,
+                "bio": "Hello, I'm Ronald!",
+                "locationLat": null,
+                "locationLng": null,
+                "gender": null,
+                "verified": false,
+                "lastActive": "2025-04-08T14:47:24.659Z",
+                "createdAt": "2025-04-08T14:44:10.886Z",
+                "updatedAt": "2025-04-08T15:14:14.299Z"
+              },
+              "isProfileComplete": false
+            }
+          }
+        },
+        "400": {
+          "description": "Invalid input data",
+          "content": {
+            "success": false,
+            "message": "Invalid input data",
+            "errors": ["Birth date must be a valid date"]
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Authentication required"
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "success": false,
+            "message": "You don't have permission to update this profile"
+          }
+        }
+      }
+    },
+    {
+      "type": "GET",
+      "description": "Get current user",
+      "path": "/users/me",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/users/me"
+      },
+      "responses": {
+        "200": {
+          "description": "User retrieved successfully",
+          "content": {
+            "success": true,
+            "data": {
+                "user": {
+                  "id": 2,
+                  "name": "Ronald",
+                  "email": "ronaldcoello6@gmail.com",
+                  "role": "ADMIN",
+                  "status": "ACTIVE",
+                  "birthDate": "1994-07-21T00:00:00.000Z",
+                  "banReason": null,
+                  "bio": null,
+                  "locationLat": null,
+                  "locationLng": null,
+                  "gender": null,
+                  "verified": false,
+                  "lastActive": "2025-04-08T22:08:31.533Z",
+                  "createdAt": "2025-04-08T22:08:15.547Z",
+                  "updatedAt": "2025-04-11T15:47:25.058Z"
+                },
+                "isProfileComplete": false
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        }
+      }
+    }
+  ]
+}

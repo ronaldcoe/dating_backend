@@ -47,7 +47,7 @@ describe('Users API', ()=> {
       
       const profileData = {
         bio: 'This is my test bio',
-        birthDate: '1990-01-15',
+        birthDate: '1990-01-15T00:00:00.000Z',
         gender: 'MALE',
         locationLat: 37.7749,
         locationLng: -122.4194
@@ -86,6 +86,21 @@ describe('Users API', ()=> {
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
     });
+
+    it('should stop users under 18 from updating their profile', async() => {
+      const user = await createTestUser();
+      const token = generateToken(user.id);
+      
+      const response = await request(app)
+        .put('/api/users/profile')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          birthDate: new Date(Date.now() - 17 * 365 * 24 * 60 * 60 * 1000) // Set to under 18
+        });
+      
+      expect(response.status).toBe(400);
+      expect(response.body.success).toBe(false);
+    })
     
     it('should require authentication', async () => {
       const response = await request(app)

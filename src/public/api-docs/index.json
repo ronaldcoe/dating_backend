@@ -1,0 +1,6 @@
+{
+  "title": "API Documentation",
+  "description": "This document outlines the specifications for the API endpoints used in our dating application.",
+  "version": "1.0.0",
+  "basePath": "/api"
+}

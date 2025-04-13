@@ -1,0 +1,37 @@
+{
+  "title": "Swipe Queue",
+  "description": "Endpoints for managing the swipe queue.",
+  "routes": [
+    {
+      "type": "GET",
+      "description": "Get swipe queue",
+      "path": "/swipe-queue",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/swipe-queue"
+      },
+      "responses": {
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        }
+      }
+    }
+  ]
+}

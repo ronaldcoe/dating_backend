@@ -1,16 +1,50 @@
 document.addEventListener('DOMContentLoaded', async () => {
+  const date = new Date();
+  console.log(date.toISOString());
   try {
-    // Fetch the API spec
-    const response = await fetch('/static/api-spec.json');
-    const apiSpec = await response.json();
+    const indexResponse = await fetch('/static/api-docs/index.json');
+    const apiIndex = await indexResponse.json();
     
-    // Update API info
-    document.getElementById('api-title').textContent = apiSpec.title || 'API Documentation';
-    document.getElementById('api-version').textContent = `v${apiSpec.version || '1.0.0'}`;
-    document.getElementById('api-description').textContent = apiSpec.description || 'No description available.';
-    document.getElementById('api-base-url').textContent = apiSpec.basePath || '/';
-    
-    // Render sidebar menu
+    const apiSpec = {
+      title: apiIndex.title || 'API Documentation',
+      description: apiIndex.description || 'No description available.',
+      version: apiIndex.version || '1.0.0',
+      basePath: apiIndex.basePath || '/',
+      resources: []
+    };
+
+    const resourceFiles = [
+      'admin.json',
+      'auth.json',
+      'reset-password.json',
+      'users.json',
+      'preferences.json',
+      'user-interactions.json',
+      'reports.json',
+      'swipe-queue.json',
+      'interests.json',
+      'photos.json'
+    ];
+
+    const resourcePromises = resourceFiles.map(async (filename) => {
+      try {
+        const response = await fetch(`/static/api-docs/resources/${filename}`);
+        return await response.json();
+      } catch (error) {
+        console.error(`Failed to load resource file: ${filename}`, error);
+        return null;
+      }
+    });
+
+    const resources = await Promise.all(resourcePromises);
+
+    apiSpec.resources = resources.filter(resource => resource !== null);
+
+    document.getElementById('api-title').textContent = apiSpec.title;
+    document.getElementById('api-version').textContent = `v${apiSpec.version}`;
+    document.getElementById('api-description').textContent = apiSpec.description;
+    document.getElementById('api-base-url').textContent = apiSpec.basePath;
+
     const sidebarMenu = document.getElementById('sidebar-menu');
     const mainPanel = document.getElementById('main-panel');
     const rightPanel = document.getElementById('right-panel');
@@ -21,27 +55,23 @@ document.addEventListener('DOMContentLoaded', async () => {
       let rightPanelHtml = '';
       
       apiSpec.resources.forEach((resource, resourceIndex) => {
-        // Add resource to sidebar
         sidebarHtml += `
           <div class="resource-group" data-resource="${resourceIndex}">
             <div class="resource-title">${resource.title || 'Untitled Resource'}</div>
         `;
-        
-        // Add endpoints under this resource
+
         if (resource.routes && resource.routes.length > 0) {
           resource.routes.forEach((endpoint, endpointIndex) => {
             const endpointId = `resource-${resourceIndex}-endpoint-${endpointIndex}`;
             const method = (endpoint.type || 'get').toLowerCase();
-            
-            // Add endpoint to sidebar
+
             sidebarHtml += `
               <div class="endpoint-link" data-endpoint-id="${endpointId}">
                 <span class="endpoint-link-method ${method}">${endpoint.type || 'GET'}</span>
                 <span class="endpoint-link-path">${endpoint.path || '/'}</span>
               </div>
             `;
-            
-            // Create main panel content for this endpoint
+
             mainPanelHtml += `
               <div class="endpoint-detail" id="${endpointId}-detail">
                 <div class="endpoint-header">
@@ -52,7 +82,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                   <div class="endpoint-description">${endpoint.description || ''}</div>
                 </div>
             `;
-            
+
             // Parameters section
             if (endpoint.parameters && endpoint.parameters.length > 0) {
               mainPanelHtml += `
@@ -126,10 +156,11 @@ document.addEventListener('DOMContentLoaded', async () => {
               `;
             }
 
-            if (endpoint.body) {
+            // Query Params section
+            if (endpoint.queryParams && endpoint.queryParams.length > 0) {
               mainPanelHtml += `
-                <div class="body-section">
-                  <h3>Request Body</h3>
+                <div class="query-params-section">
+                  <h3>Query Parameters</h3>
                   <table>
                     <thead>
                       <tr>
@@ -142,17 +173,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <tbody>
               `;
               
-              endpoint.body.forEach(field => {
+              endpoint.queryParams.forEach(param => {
                 mainPanelHtml += `
                   <tr>
-                    <td>${field.key || ''}</td>
-                    <td>
-                      <span class="badge">
-                        ${field.type || 'string'}
-                      </span>
-                    </td>
-                    <td>${field.required ? '<span class="required-badge">Required</span>' : 'Optional'}</td>
-                    <td>${field.description || ''}</td>
+                    <td><span class="badge">${param.key || ''}</span></td>
+                    <td>${param.type || 'string'}</td>
+                    <td>${param.required ? '<span class="required-badge">Required</span>' : 'Optional'}</td>
+                    <td>${param.description || ''}</td>
                   </tr>
                 `;
               });
@@ -163,10 +190,47 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
               `;
             }
-            
-            // Request example (only for POST, PUT, PATCH)
-            if (endpoint.body && endpoint.body.length > 0 && 
-                ['POST', 'PUT', 'PATCH'].includes((endpoint.type || '').toUpperCase())) {
+
+            if (endpoint.requestExample) {
+              if (endpoint.requestExample.body) {
+                mainPanelHtml += `
+                  <div class="body-section">
+                    <h3>Request Body</h3>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Key</th>
+                          <th>Type</th>
+                          <th>Required</th>
+                          <th>Description</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                  `;
+              
+                endpoint.requestExample.body.forEach(field => {
+                  console.log(field);
+                  mainPanelHtml += `
+                    <tr>
+                      <td>${field.key || ''}</td>
+                      <td>
+                        <span class="badge">
+                          ${field.type || 'string'}
+                        </span>
+                      </td>
+                      <td>${field.required ? '<span class="required-badge">Required</span>' : 'Optional'}</td>
+                      <td>${field.description || ''}</td>
+                    </tr>
+
+                  `;
+                });
+                mainPanelHtml += `
+                      </tbody>
+                    </table>
+                  </div>
+                `;
+             }
+
               mainPanelHtml += `
                 <div class="request-section">
                   <h3>Request Example</h3>
@@ -174,29 +238,33 @@ document.addEventListener('DOMContentLoaded', async () => {
               `;
               
               const requestExample = {};
-              endpoint.body.forEach(param => {
-                if (param.value !== undefined) {
-                  requestExample[param.key] = param.value;
-                } else if (param.type === 'object') {
-                  requestExample[param.key] = {};
-                } else if (param.type === 'array') {
-                  requestExample[param.key] = [];
-                } else if (param.type === 'number' || param.type === 'integer') {
-                  requestExample[param.key] = 0;
-                } else if (param.type === 'boolean') {
-                  requestExample[param.key] = false;
-                } else {
-                  requestExample[param.key] = "";
-                }
-              });
+              if (endpoint.requestExample.body && endpoint.requestExample.body.length > 0) {
+                endpoint.requestExample.body.forEach(param => {
+                  if (param.value !== undefined) {
+                    requestExample[param.key] = param.value;
+                  } else if (param.type === 'object') {
+                    requestExample[param.key] = {};
+                  } else if (param.type === 'array') {
+                    requestExample[param.key] = [];
+                  } else if (param.type === 'number' || param.type === 'integer') {
+                    requestExample[param.key] = 0;
+                  } else if (param.type === 'boolean') {
+                    requestExample[param.key] = false;
+                  } else {
+                    requestExample[param.key] = "";
+                  }
+                });
+              }
               
               mainPanelHtml += `
-                  <div class="code-sample">
-                    <p>${endpoint.type} ${endpoint.path}</p>
-                    <pre><code>${JSON.stringify(requestExample, null, 2)}</code></pre>
+                <div class="code-sample">
+                  <p>${endpoint.type} ${endpoint.requestExample.url}</p>
+                  ${endpoint.requestExample.body !== undefined 
+                    ? `<pre><code>${JSON.stringify(requestExample, null, 2)}</code></pre>` 
+                    : ''}
                   </div>
-                </div>
-              `;
+                </div>`;
+
             }
             
             // Responses section 
@@ -231,17 +299,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             
             mainPanelHtml += `</div>`;
-            
-            // Create right panel content (response examples)
+
             rightPanelHtml += `
               <div class="response-panel-content" id="${endpointId}-response">
             `;
-            
-            // Display different response examples based on status codes
+
             if (endpoint.responses) {
               rightPanelHtml += `<div class="response-tabs">`;
-              
-              // Create tabs for each response code
+
               Object.keys(endpoint.responses).forEach((code, index) => {
                 rightPanelHtml += `
                   <button class="response-tab ${index === 0 ? 'active' : ''}" 
@@ -253,8 +318,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               });
               
               rightPanelHtml += `</div>`;
-              
-              // Create tab content panels for each response
+
               Object.entries(endpoint.responses).forEach(([code, response], index) => {
                 rightPanelHtml += `
                   <div class="response-content ${index === 0 ? 'active' : ''}" 
@@ -289,41 +353,35 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
       
       sidebarMenu.innerHTML = sidebarHtml;
-      
-      // Add endpoint details to main panel (after welcome message)
+
       const welcomeDiv = mainPanel.querySelector('.endpoint-welcome');
       mainPanel.innerHTML = '';
       if (welcomeDiv) {
         mainPanel.appendChild(welcomeDiv);
       }
       mainPanel.innerHTML += mainPanelHtml;
-      
-      // Add response examples to right panel (after welcome message)
+
       const responseWelcomeDiv = rightPanel.querySelector('.response-welcome');
       rightPanel.innerHTML = '';
       if (responseWelcomeDiv) {
         rightPanel.appendChild(responseWelcomeDiv);
       }
       rightPanel.innerHTML += rightPanelHtml;
-      
-      // Add click event listeners to sidebar endpoint links
+
       document.querySelectorAll('.endpoint-link').forEach(link => {
         link.addEventListener('click', () => {
           const endpointId = link.getAttribute('data-endpoint-id');
-          
-          // Hide welcome messages
+
           const welcomeElem = document.querySelector('.endpoint-welcome');
           const responseWelcomeElem = document.querySelector('.response-welcome');
           
           if (welcomeElem) welcomeElem.style.display = 'none';
           if (responseWelcomeElem) responseWelcomeElem.style.display = 'none';
-          
-          // Deactivate all endpoints and sidebar links
+
           document.querySelectorAll('.endpoint-detail').forEach(el => el.classList.remove('active'));
           document.querySelectorAll('.response-panel-content').forEach(el => el.classList.remove('active'));
           document.querySelectorAll('.endpoint-link').forEach(el => el.classList.remove('active'));
-          
-          // Activate the selected endpoint
+
           const detailElem = document.getElementById(`${endpointId}-detail`);
           const responseElem = document.getElementById(`${endpointId}-response`);
           
@@ -332,27 +390,23 @@ document.addEventListener('DOMContentLoaded', async () => {
           link.classList.add('active');
         });
       });
-      
-      // Add click event listeners to response tabs
+
       document.querySelectorAll('.response-tab').forEach(tab => {
         tab.addEventListener('click', () => {
           const code = tab.getAttribute('data-code');
           const endpointId = tab.getAttribute('data-endpoint');
-          
-          // Deactivate all tabs and response content panels for this endpoint
+
           document.querySelectorAll(`.response-tab[data-endpoint="${endpointId}"]`).forEach(t => 
             t.classList.remove('active'));
           document.querySelectorAll(`[id^="${endpointId}-response-"]`).forEach(c => 
             c.classList.remove('active'));
-          
-          // Activate the selected tab and content
+
           tab.classList.add('active');
           const responseContentElem = document.getElementById(`${endpointId}-response-${code}`);
           if (responseContentElem) responseContentElem.classList.add('active');
         });
       });
-      
-      // Setup search functionality
+
       const searchInput = document.getElementById('search-input');
       if (searchInput) {
         searchInput.addEventListener('input', () => {
@@ -364,16 +418,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             if (method.includes(searchTerm) || path.includes(searchTerm)) {
               link.style.display = 'flex';
-              
-              // Make sure the resource group is also visible
+
               const resourceGroup = link.closest('.resource-group');
               if (resourceGroup) resourceGroup.style.display = 'block';
             } else {
               link.style.display = 'none';
             }
           });
-          
-          // Hide empty resource groups
+
           document.querySelectorAll('.resource-group').forEach(group => {
             const visibleEndpoints = group.querySelectorAll('.endpoint-link[style="display: flex"]').length;
             if (visibleEndpoints === 0) {
@@ -385,7 +437,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       sidebarMenu.innerHTML = '<div style="padding: 15px;">No API resources defined.</div>';
     }
-    document.head.appendChild(style);
   } catch (error) {
     console.error('Error loading API spec:', error);
     document.getElementById('api-description').textContent = 'Error loading API documentation. Please try again later.';

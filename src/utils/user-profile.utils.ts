@@ -11,10 +11,48 @@ export const validateProfileUpdate = (data: any) => {
         'string.min': 'Name should be at least 2 characters',
         'string.max': 'Name should not exceed 50 characters',
       }),
-    birthDate: Joi.date().allow(null)
-      .messages({
-        'date.base': 'Birth date must be a valid date',
-      }),
+      birthDate: Joi.date().allow(null)
+      .custom((value, helpers) => {
+        if (!value) return value;
+        
+        // Parse the birthdate
+        const birthDate = new Date(value);
+        
+        // Get current UTC date and time
+        const utcNow = new Date();
+        
+        // For the most conservative approach, we check against UTC-12
+        // which is 12 hours behind UTC
+        const conservativeDate = new Date(utcNow);
+        conservativeDate.setHours(utcNow.getHours() - 12);
+        
+        // Extract just the date components for clean comparison
+        const birthYear = birthDate.getUTCFullYear();
+        const birthMonth = birthDate.getUTCMonth();
+        const birthDay = birthDate.getUTCDate();
+        
+        const conservativeYear = conservativeDate.getUTCFullYear();
+        const conservativeMonth = conservativeDate.getUTCMonth();
+        const conservativeDay = conservativeDate.getUTCDate();
+        
+        // Calculate age (whole years only)
+        let age = conservativeYear - birthYear;
+        
+        // Adjust age if birthday hasn't occurred yet this year in conservative timezone
+        if (
+          conservativeMonth < birthMonth || 
+          (conservativeMonth === birthMonth && conservativeDay < birthDay)
+        ) {
+          age--;
+        }
+
+        // STRICT RULE: Must be 18 or older in the most conservative timezone UTC-12
+        if (age < 18) {
+          return helpers.message({ custom: 'You must be at least 18 years old to use this service' });
+        }
+        
+        return value;
+      }, 'age validation'),
     gender: Joi.string().valid(...Object.values(Gender)).allow(null)
       .messages({
         'any.only': 'Gender must be either MALE or FEMALE',

@@ -8,7 +8,7 @@
   --method-put: #FCA130;
   --method-delete: #F93E3E;
   --method-patch: #7050e3;
-  --sidebar-width: 260px;
+  --sidebar-width: 280px;
   --content-width: calc(100% - var(--sidebar-width));
   --main-panel-width: 55%;
   --right-panel-width: 45%;
@@ -144,11 +144,11 @@ header {
 
 .endpoint-link-method {
   font-weight: bold;
-  padding: 2px 6px;
+  padding: 1px 6px;
   border-radius: 3px;
   margin-right: 8px;
-  width: 50px;
-  font-size: 11px;
+  width: 55px;
+  font-size: 10px;
   min-width: 40px;
   text-align: center;
   color: white;
@@ -232,11 +232,19 @@ header {
 
 .endpoint-description {
   color: #666;
+  font-size: 14px;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: var(--secondary-color);
   margin-bottom: 20px;
 }
 
 .parameters-section h3, 
-.request-section h3, .headers-section h3 {
+.request-section h3, 
+.headers-section h3, 
+.body-section h3,
+.responses-section h3,
+.query-params-section h3 {
   font-size: 16px;
   margin-bottom: 10px;
   padding-bottom: 5px;

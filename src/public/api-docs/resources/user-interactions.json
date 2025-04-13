@@ -1,0 +1,226 @@
+{
+  "title": "User Interactions",
+  "description": "Endpoints for managing user interactions, including likes, messages, and blocks.",
+  "routes": [
+    {
+      "type": "POST",
+      "description": "Like a user",
+      "path": "/user-interactions/like",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/users-interactions/like",
+        "body": [
+          {
+            "key": "targetUserId",
+            "value": 8,
+            "type": "number",
+            "required": true,
+            "description": "ID of the user to like"
+          }
+        ]
+      },
+      "responses": {
+        "200": {
+          "description": "User liked",
+          "content": {
+            "success": true,
+            "message": "User liked",
+            "isMatch": false
+          }
+        },
+        "400": {
+          "description": "Target user not found",
+          "content": {
+            "success": false,
+            "message": "Target user not found"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        }
+      }
+    },
+    {
+      "type": "POST",
+      "description": "Dislike a user",
+      "path": "/user-interactions/dislike",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/users-interactions/dislike",
+        "body": [
+          {
+            "key": "targetUserId",
+            "value": 8,
+            "type": "number",
+            "required": true,
+            "description": "ID of the user to dislike"
+          }
+        ]
+      },
+      "responses": {
+        "200": {
+          "description": "User disliked",
+          "content": {
+            "success": true,
+            "message": "User disliked",
+            "isMatch": false
+          }
+        },
+        "400": {
+          "description": "Target user not found",
+          "content": {
+            "success": false,
+            "message": "Target user not found"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        }
+      }
+    },
+    {
+      "type": "POST",
+      "description": "Block a user",
+      "path": "/user-interactions/block",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/users-interactions/block",
+        "body": [
+          {
+            "key": "targetUserId",
+            "value": 8,
+            "type": "number",
+            "required": true,
+            "description": "ID of the user to block"
+          }
+        ]
+      },
+      "responses": {
+        "200": {
+          "description": "User blocked",
+          "content": {
+            "success": true,
+            "message": "User blocked",
+            "isMatch": false
+          }
+        },
+        "400": {
+          "description": "Target user not found",
+          "content": {
+            "success": false,
+            "message": "Target user not found"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        }
+      }
+    },
+    {
+      "type": "DELETE",
+      "description": "Unblock a user",
+      "path": "/user-interactions/unblock",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/users-interactions/unblock",
+        "body": [
+          {
+            "key": "targetUserId",
+            "value": 8,
+            "type": "number",
+            "required": true,
+            "description": "ID of the user to unblock"
+          }
+        ]
+      },
+      "responses": {
+        "200": {
+          "description": "User unblocked",
+          "content": {
+            "success": true,
+            "message": "User unblocked",
+            "isMatch": false
+          }
+        },
+        "400": {
+          "description": "Target user not found",
+          "content": {
+            "success": false,
+            "message": "Target user not found"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        }
+      }
+    }
+  ]
+}

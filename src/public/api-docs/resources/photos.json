@@ -1,0 +1,147 @@
+{
+  "title": "Photos",
+  "description": "Endpoints for managing user photos.",
+  "routes": [
+    {
+      "type": "GET",
+      "description": "Get user photos",
+      "path": "/users/photos",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/users/photos"
+      },
+      "responses": {
+        "200": {
+          "description": "Photos retrieved successfully",
+          "content": {
+            "success": true,
+            "data": {
+                "photos": [
+                    {
+                        "id": 1,
+                        "userId": 2,
+                        "originalUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/uploads/2/1.png",
+                        "standardUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/processed/2/standard-1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIA3FLD6KUQVLUIQB4Q%2F20250409%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250409T060600Z&X-Amz-Expires=3600&X-Amz-Signature=daa5edc785ac4871bcd28454707660ade07bed68f67feca7e731278106572aeb&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject",
+                        "thumbnailUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/processed/2/thumbnail-1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIA3FLD6KUQVLUIQB4Q%2F20250409%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250409T060600Z&X-Amz-Expires=3600&X-Amz-Signature=33019083e5ed6f9dedda326b7825403d6d8ea168c4f8521576caeca1f48e9f22&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject",
+                        "position": 1,
+                        "isPrimary": true,
+                        "status": "COMPLETED",
+                        "moderationMessage": null,
+                        "moderatedAt": "2025-04-09T05:57:34.957Z",
+                        "processingError": null,
+                        "createdAt": "2025-04-09T05:57:30.361Z",
+                        "updatedAt": "2025-04-09T05:57:34.958Z"
+                    },
+                    {
+                        "id": 2,
+                        "userId": 2,
+                        "originalUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/uploads/2/2.jpg",
+                        "standardUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/processed/2/standard-2.jpg",
+                        "thumbnailUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/processed/2/thumbnail-2.jpg",
+                        "position": 2,
+                        "isPrimary": false,
+                        "status": "REJECTED",
+                        "moderationMessage": "Detected inappropriate content: Alcoholic Beverages, Alcohol",
+                        "moderatedAt": "2025-04-09T06:05:58.145Z",
+                        "processingError": null,
+                        "createdAt": "2025-04-09T06:05:54.592Z",
+                        "updatedAt": "2025-04-09T06:05:58.145Z"
+                    }
+                ]
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        }
+      }
+    },
+    {
+      "type": "POST",
+      "description": "Upload a new photo",
+      "path": "/users/photos",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/users/photos",
+        "body": [
+          {
+            "key": "image",
+            "value": "{file}",
+            "type": "file",
+            "required": true,
+            "description": "File to upload"
+          }
+        ]
+      },
+      "responses": {
+        "200": {
+          "description": "Photo uploaded successfully",
+          "content": {
+            "success": true,
+            "message": "Photo uploaded successfully. Processing in progress.",
+            "data": {
+                "photoId": 2,
+                "original": "https://datingapp-staging.s3.us-east-1.amazonaws.com/uploads/2/2.jpg",
+                "standard": "https://datingapp-staging.s3.us-east-1.amazonaws.com/processed/2/standard-2.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIA3FLD6KUQVLUIQB4Q%2F20250409%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250409T060555Z&X-Amz-Expires=3600&X-Amz-Signature=b9858a5dc9768a8f779f92905ed9e67ebbfc0ca5fe7fb69c917a4aa27d0c5be8&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject",
+                "thumbnail": "https://datingapp-staging.s3.us-east-1.amazonaws.com/processed/2/thumbnail-2.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIA3FLD6KUQVLUIQB4Q%2F20250409%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250409T060555Z&X-Amz-Expires=3600&X-Amz-Signature=b1f1329c314f3c6cd4a26f7098d0256475937453710807a52263b1f2aa6ccf27&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject",
+                "status": "PENDING",
+                "isPrimary": false,
+                "position": 2
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        },
+        "400": {
+          "description": "Invalid file type",
+          "content": {
+            "success": false,
+            "message": "No file provided"
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "content": {
+            "success": false,
+            "message": "Only image files are allowed"
+          }
+        }
+      }
+    }
+  ] 
+}

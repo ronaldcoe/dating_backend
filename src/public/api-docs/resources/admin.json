@@ -1,0 +1,331 @@
+{
+  "title": "Admin",
+  "description": "Endpoints for admin functionalities, including user management and statistics.",
+  "routes": [
+    {
+      "type": "GET",
+      "description": "Get all users. Required roles are ADMIN or MODERATOR.",
+      "path": "/admin/users",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "queryParams": [
+        {
+          "key": "page",
+          "value": 1,
+          "type": "integer",
+          "required": false,
+          "description": "Page number for pagination"
+        },
+        {
+          "key": "limit",
+          "value": 10,
+          "type": "integer",
+          "required": false,
+          "description": "Number of items per page. Default is 10"
+        }
+      ],
+      "requestExample": {
+        "url": "/admin/users?page=2&limit=10"
+      },
+      "responses": {
+        "200": {
+          "description": "Users retrieved successfully",
+          "content": {
+            "success": true,
+            "message": "Users fetched successfully",
+            "data": [
+                {
+                    "id": 2,
+                    "name": "Ronald",
+                    "email": "ronaldcoello6@gmail.com",
+                    "role": "USER",
+                    "status": "ACTIVE",
+                    "birthDate": "1994-07-21T00:00:00.000Z",
+                    "banReason": null,
+                    "bio": null,
+                    "locationLat": null,
+                    "locationLng": null,
+                    "gender": null,
+                    "verified": false,
+                    "lastActive": "2025-04-08T22:08:31.533Z",
+                    "createdAt": "2025-04-08T22:08:15.547Z",
+                    "updatedAt": "2025-04-09T06:15:21.864Z",
+                    "photos": [
+                        {
+                            "id": 1,
+                            "userId": 2,
+                            "originalUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/uploads/2/1.png",
+                            "standardUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/processed/2/standard-1.jpg",
+                            "thumbnailUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/processed/2/thumbnail-1.jpg",
+                            "position": 1,
+                            "isPrimary": true,
+                            "status": "COMPLETED",
+                            "moderationMessage": null,
+                            "moderatedAt": "2025-04-09T05:57:34.957Z",
+                            "processingError": null,
+                            "createdAt": "2025-04-09T05:57:30.361Z",
+                            "updatedAt": "2025-04-09T05:57:34.958Z"
+                        },
+                        {
+                            "id": 2,
+                            "userId": 2,
+                            "originalUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/uploads/2/2.jpg",
+                            "standardUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/processed/2/standard-2.jpg",
+                            "thumbnailUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/processed/2/thumbnail-2.jpg",
+                            "position": 2,
+                            "isPrimary": false,
+                            "status": "REJECTED",
+                            "moderationMessage": "Detected inappropriate content: Alcoholic Beverages, Alcohol",
+                            "moderatedAt": "2025-04-09T06:05:58.145Z",
+                            "processingError": null,
+                            "createdAt": "2025-04-09T06:05:54.592Z",
+                            "updatedAt": "2025-04-09T06:05:58.145Z"
+                        }
+                    ],
+                    "interests": [],
+                    "userPreferences": null
+                }
+            ],
+            "pagination": {
+                "page": 1,
+                "limit": 10,
+                "totalItems": 1,
+                "totalPages": 1
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "success": false,
+            "message": "Not authorized"
+          }
+        }
+      },
+      "params": [
+        {
+          "key": "page",
+          "type": "integer",
+          "value": 1,
+          "required": false,
+          "description": "Page number for pagination"
+        },
+        {
+          "key": "limit",
+          "type": "integer",
+          "value": 10,
+          "required": false,
+          "description": "Number of items per page"
+        }
+      ]
+    },
+    {
+      "type": "GET",
+      "description": "Get user by id",
+      "path": "/admin/users/:id",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/admin/users/2"
+      },
+      "responses": {
+        "200": {
+          "description": "User retrieved successfully",
+          "content": {
+            "success": true,
+            "message": "User fetched successfully",
+            "data": {
+              "success": true,
+              "message": "User fetched successfully",
+              "data": {
+                  "id": 2,
+                  "name": "Ronald",
+                  "email": "ronaldcoello6@gmail.com",
+                  "password": "$2b$10$yIY9z.W/rezTfTzbB7e7gOugiMKgwXOdfrqdXlfqIUthmpyZx1.9i",
+                  "role": "ADMIN",
+                  "status": "ACTIVE",
+                  "birthDate": "1994-07-21T00:00:00.000Z",
+                  "banReason": null,
+                  "bio": null,
+                  "locationLat": null,
+                  "locationLng": null,
+                  "gender": null,
+                  "verified": false,
+                  "lastActive": "2025-04-08T22:08:31.533Z",
+                  "createdAt": "2025-04-08T22:08:15.547Z",
+                  "updatedAt": "2025-04-11T04:24:55.853Z",
+                  "photos": [
+                      {
+                          "id": 1,
+                          "userId": 2,
+                          "originalUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/uploads/2/1.png",
+                          "standardUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/processed/2/standard-1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIA3FLD6KUQVLUIQB4Q%2F20250411%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250411T153854Z&X-Amz-Expires=3600&X-Amz-Signature=ae427feee91fe54c773a4a95f6bbcc2ded330b3dd1bf64d16148026f5bbca9ae&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject",
+                          "thumbnailUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/processed/2/thumbnail-1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIA3FLD6KUQVLUIQB4Q%2F20250411%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250411T153854Z&X-Amz-Expires=3600&X-Amz-Signature=8892e2d69fe4463bca51e665ddac039c93713d503903e5b0afa20306cab3f968&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject",
+                          "position": 1,
+                          "isPrimary": true,
+                          "status": "COMPLETED",
+                          "moderationMessage": null,
+                          "moderatedAt": "2025-04-09T05:57:34.957Z",
+                          "processingError": null,
+                          "createdAt": "2025-04-09T05:57:30.361Z",
+                          "updatedAt": "2025-04-09T05:57:34.958Z"
+                      },
+                      {
+                          "id": 2,
+                          "userId": 2,
+                          "originalUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/uploads/2/2.jpg",
+                          "standardUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/processed/2/standard-2.jpg",
+                          "thumbnailUrl": "https://datingapp-staging.s3.us-east-1.amazonaws.com/processed/2/thumbnail-2.jpg",
+                          "position": 2,
+                          "isPrimary": false,
+                          "status": "REJECTED",
+                          "moderationMessage": "Detected inappropriate content: Alcoholic Beverages, Alcohol",
+                          "moderatedAt": "2025-04-09T06:05:58.145Z",
+                          "processingError": null,
+                          "createdAt": "2025-04-09T06:05:54.592Z",
+                          "updatedAt": "2025-04-09T06:05:58.145Z"
+                      }
+                  ],
+                  "interests": [],
+                  "userPreferences": null
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "success": false,
+            "message": "Not authorized"
+          }
+        },
+        "404": {
+          "description": "User not found",
+          "content": {
+            "success": false,
+            "message": "User not found"
+          }
+        }
+      }
+    },
+    {
+      "title": "Get all reports",
+      "type": "GET",
+      "description": "Get all reports. Required roles are ADMIN or MODERATOR.",
+      "path": "/admin/reports",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "queryParams": [
+        {
+          "key": "page",
+          "value": 1,
+          "type": "integer",
+          "required": false,
+          "description": "Page number for pagination"
+        },
+        {
+          "key": "limit",
+          "value": 10,
+          "type": "integer",
+          "required": false,
+          "description": "Number of items per page. Default is 10"
+        }
+      ],
+      "requestExample": {
+        "url": "/admin/reports?page=2&limit=10"
+      },
+      "responses": {
+        "200": {
+          "description": "Reports retrieved successfully",
+          "content": {
+            "success": true,
+            "data": [
+                {
+                    "id": 2,
+                    "sourceUserId": 2,
+                    "targetUserId": 3,
+                    "reason": "Test report",
+                    "createdAt": "2025-04-11T22:05:11.925Z",
+                    "updatedAt": "2025-04-11T22:05:11.925Z",
+                    "reviewed": false,
+                    "resolution": null,
+                    "reviewedAt": null,
+                    "reviewedBy": null
+                }
+            ],
+            "pagination": {
+                "page": 1,
+                "limit": 10,
+                "totalItems": 1,
+                "totalPages": 1
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "success": false,
+            "message": "Not authorized"
+          }
+        }
+      }
+    }
+  ]
+}
