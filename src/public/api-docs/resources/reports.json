@@ -32,10 +32,17 @@
           },
           {
             "key": "reason",
-            "value": "Inappropriate behavior",
+            "value": "OTHER",
             "type": "string",
             "required": true,
-            "description": "Reason for reporting the user"
+            "description": "Reason for reporting the user. Possible values: INAPPROPRIATE_CONTENT, SCAM, HARASSMENT, SPAM, OTHER"
+          },
+          {
+            "key": "description",
+            "value": "User is sending spam messages",
+            "type": "string",
+            "required": false,
+            "description": "Additional description of the report. If the reason is OTHER, this field is required."
           }
         ]
       },

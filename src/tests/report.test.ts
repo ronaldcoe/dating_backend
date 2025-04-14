@@ -86,6 +86,58 @@ describe('Report API', () => {
       expect(response.body.success).toBe(false)
     })
 
+    it('should required valid reason', async() =>{
+      const user = await createTestUser()
+      const token = await generateToken(user.id)
+
+      const targetUser = await createTestUser()
+
+      const response = await request(app)
+        .post('/api/reports/new')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          targetUserId: targetUser.id,
+          reason: 'INVALID_REASON'
+        })
+        
+      expect(response.status).toBe(400)
+      expect(response.body.success).toBe(false)
+    })
+
+    it('should required description if reason is OTHER', async() =>{
+      const user = await createTestUser()
+      const token = await generateToken(user.id)
+
+      const targetUser = await createTestUser()
+
+      const response = await request(app)
+        .post('/api/reports/new')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          targetUserId: targetUser.id,
+          reason: 'OTHER'
+        })
+        
+      expect(response.status).toBe(400)
+      expect(response.body.success).toBe(false)
+    })
+
+    it('should take description if reason is OTHER', async() =>{
+      const user = await createTestUser()
+      const token = await generateToken(user.id)
+      const targetUser = await createTestUser()
+      const response = await request(app)
+        .post('/api/reports/new')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          targetUserId: targetUser.id,
+          reason: 'OTHER',
+          description: 'This is a test'
+        })
+      expect(response.status).toBe(200)
+      expect(response.body.success).toBe(true)
+    })
+
     it('should not report self', async() =>{
       const user = await createTestUser()
       const token = await generateToken(user.id)

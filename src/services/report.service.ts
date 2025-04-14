@@ -6,9 +6,12 @@ import { ReportReason } from '@prisma/client';
 
 export class ReportService {
   
-  static async createReport(sourceUserId: number, targetUserId: number, reason: ReportReason) {
+  static async createReport(sourceUserId: number, 
+                            targetUserId: number, 
+                            reason: ReportReason,
+                            description: string) {
     // Validate report
-    const isValid = await isValidReport(sourceUserId, targetUserId, reason);
+    const isValid = await isValidReport(sourceUserId, targetUserId, reason, description);
     if (!isValid) {
       throw new Error('Invalid report');
     }

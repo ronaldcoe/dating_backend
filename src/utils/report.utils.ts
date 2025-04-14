@@ -9,7 +9,10 @@ import { ReportReason } from "@prisma/client";
  * - Target User doesn't need to be active. We want to allow reports even if the user is inactive.
  */
 
-export async function isValidReport(sourceUserId: number, targetUserId: number, reason: ReportReason) {
+export async function isValidReport(sourceUserId: number, 
+                                    targetUserId: number, 
+                                    reason: ReportReason,
+                                    description: string) {
   // User cannot report themselves
   if (sourceUserId === targetUserId) {
     throw new Error('Users cannot report themselves');
@@ -23,6 +26,10 @@ export async function isValidReport(sourceUserId: number, targetUserId: number, 
   const validReasons = Object.values(ReportReason);
   if (!validReasons.includes(reason)) {
     throw new Error(`Reason must be: ${validReasons}`);
+  }
+
+  if (reason === ReportReason.OTHER && !description) {
+    throw new Error('Description must be provided if reason is OTHER');
   }
 
   // targetUser must  exsist in the database

@@ -12,6 +12,7 @@ export class ReportController {
       const sourceUserId = req.user?.userId;
       const targetUserId = req.body.targetUserId;
       const reason = req.body.reason;
+      const description = req.body.description;
 
       if (!sourceUserId) {
         res.status(401).json({ success: false, message: "Not authenticated" });
@@ -19,7 +20,7 @@ export class ReportController {
       }
 
       // Create report
-      await ReportService.createReport(sourceUserId, targetUserId, reason);
+      await ReportService.createReport(sourceUserId, targetUserId, reason, description);
 
       res.status(200).json({ success: true, message: "Report created" });
     } catch (error: any) {
