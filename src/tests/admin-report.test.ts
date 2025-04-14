@@ -197,6 +197,7 @@ describe('Admin Reports API', () => {
       const regularUser = await createTestUser();
       const regularUser2 = await createTestUser();
       const token = generateToken(admin.id);
+
       const report = await createTestReport({ 
         sourceUserId: regularUser.id, targetUserId: regularUser2.id });
 

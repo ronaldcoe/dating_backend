@@ -1,5 +1,5 @@
 import { db } from '../lib/db';
-import { Role, UserStatus } from '@prisma/client';
+import { Role, UserStatus, ReportReason } from '@prisma/client';
 import request from 'supertest';
 import bcrypt from 'bcryptjs';
 import app from '../server';
@@ -85,7 +85,7 @@ export const createTestReport = async (customData = {}) => {
   const reportData = {
     sourceUserId: 1,
     targetUserId: 2,
-    reason: 'Inappropriate content',
+    reason: ReportReason.INAPPROPRIATE_CONTENT,
     ...customData
   };
   

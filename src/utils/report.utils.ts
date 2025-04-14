@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { findUserById } from "@/models/user.model";
+import { ReportReason } from "@prisma/client";
 
 /**
  * Validate if report is valid
@@ -8,10 +9,20 @@ import { findUserById } from "@/models/user.model";
  * - Target User doesn't need to be active. We want to allow reports even if the user is inactive.
  */
 
-export async function isValidReport(sourceUserId: number, targetUserId: number) {
+export async function isValidReport(sourceUserId: number, targetUserId: number, reason: ReportReason) {
   // User cannot report themselves
   if (sourceUserId === targetUserId) {
     throw new Error('Users cannot report themselves');
+  }
+
+  // TARGET USER ID MUST BE PROVIDED
+  if (!targetUserId) {
+    throw new Error('targetUserId must be provided');
+  }
+
+  const validReasons = Object.values(ReportReason);
+  if (!validReasons.includes(reason)) {
+    throw new Error(`Reason must be: ${validReasons}`);
   }
 
   // targetUser must  exsist in the database
@@ -23,8 +34,6 @@ export async function isValidReport(sourceUserId: number, targetUserId: number) 
 
   return true;
 }
-
-
 
 /**
  * Admin report validation

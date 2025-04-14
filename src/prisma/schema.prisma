@@ -199,13 +199,22 @@ enum ReportStatus {
   REJECTED
 }
 
+enum ReportReason {
+  SPAM
+  HARASSMENT
+  INAPPROPRIATE_CONTENT
+  SCAM
+  OTHER
+}
+
 model Report {
   id           Int       @id @default(autoincrement())
   sourceUserId Int       @map("source_id")
   source       User      @relation(fields: [sourceUserId], references: [id], name: "Reporter")
   targetUserId Int       @map("target_id")
   target       User      @relation(fields: [targetUserId], references: [id], name: "Reported")
-  reason       String
+  reason       ReportReason
+  description  String?   @map("description") @db.Text
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
   status       ReportStatus @default(PENDING)

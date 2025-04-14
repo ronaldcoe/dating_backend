@@ -17,7 +17,7 @@ describe('Report API', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({
           targetUserId: targetUser.id,
-          reason: 'spam'
+          reason: 'SPAM'
         })
         
       expect(response.status).toBe(200)
@@ -29,7 +29,7 @@ describe('Report API', () => {
         .post('/api/reports/new')
         .send({
           targetUserId: 1,
-          reason: 'spam'
+          reason: 'INAPPROPRIATE_CONTENT'
         })
         
       expect(response.status).toBe(401)
@@ -45,7 +45,7 @@ describe('Report API', () => {
         .post('/api/reports/new')
         .set('Authorization', `Bearer ${token}`)
         .send({
-          reason: 'spam'
+          reason: 'INAPPROPRIATE_CONTENT'
         })
         
       expect(response.status).toBe(400)
@@ -61,7 +61,7 @@ describe('Report API', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({
           targetUserId: 999,
-          reason: 'spam'
+          reason: 'INAPPROPRIATE_CONTENT'
         })
       
       expect(response.status).toBe(400)
@@ -95,7 +95,7 @@ describe('Report API', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({
           targetUserId: user.id,
-          reason: 'spam'
+          reason: 'INAPPROPRIATE_CONTENT'
         })
         
       expect(response.status).toBe(400)

@@ -1,9 +1,10 @@
 import { db } from '@/lib/db';
+import { ReportReason } from '@prisma/client';
 
 type ReportType = {
   sourceUserId: number;
   targetUserId: number;
-  reason: string;
+  reason: ReportReason;
 }
 
 export async function createReport(data: ReportType) {
