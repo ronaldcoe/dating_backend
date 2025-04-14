@@ -204,8 +204,8 @@ model Report {
   reviewed     Boolean   @default(false)
   resolution   String?
   reviewedAt   DateTime? @map("reviewed_at")
-  reviewedBy   Int?      @map("reviewed_by")
-  reviewer     User?     @relation(fields: [reviewedBy], references: [id], name: "Reviewer")
+  reviewerId   Int?      @map("reviewer_id")
+  reviewer     User?     @relation(fields: [reviewerId], references: [id], name: "Reviewer")
 }
 
 // Add to prisma/schema.prisma
