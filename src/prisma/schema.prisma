@@ -192,6 +192,13 @@ model UserInteraction {
   @@map("user_interactions")
 }
 
+enum ReportStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+}
+
 model Report {
   id           Int       @id @default(autoincrement())
   sourceUserId Int       @map("source_id")
@@ -201,7 +208,7 @@ model Report {
   reason       String
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
-  reviewed     Boolean   @default(false)
+  status       ReportStatus @default(PENDING)
   resolution   String?
   reviewedAt   DateTime? @map("reviewed_at")
   reviewerId   Int?      @map("reviewer_id")

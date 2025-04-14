@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { AdminReportService } from "@/services/admin/report.service";
+import { validateParams } from "@/utils/report.utils";
+import { AppError,ValidationError } from "@/utils/errors";
 
 export class AdminReportController {
   /**
@@ -11,29 +13,35 @@ export class AdminReportController {
       // Extract pagination parameters from query string
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      
-      // Validate pagination parameters
-      if (page < 1 || limit < 1 || limit > 100) {
-        res.status(400).json({ 
-          success: false, 
-          message: "Invalid pagination parameters. Page must be >= 1 and limit must be between 1 and 100" 
-        });
-        return;
+      const sortBy = req.query.sortBy as string || "createdAt";
+      const status = req.query.status as string || 'PENDING';
+      const sortOrder = req.query.sortOrder as 'asc' | 'desc' || 'desc';
+
+
+      const filters = {
+        page,
+        limit,
+        sortBy,
+        sortOrder,
+        status: status === 'all' ? undefined : status
       }
 
       // Get reports with pagination
-      const reports = await AdminReportService.getReports(page, limit);
+      const reports = await AdminReportService.getReports(filters);
 
       res.status(200).json({ 
         success: true, 
         data: reports.data,
         pagination: reports.pagination
       });
-    } catch (error: any) {
-      res.status(500).json({ 
-        success: false, 
-        message: error.message || "Failed to retrieve reports" 
-      });
+    } catch (error:any) {
+      if (error instanceof ValidationError) {
+        res.status(400).json({ success: false, message: error.message });
+      } else if (error instanceof AppError) {
+        res.status(400).json({ success: false, message: error.message });
+      } else {
+        res.status(500).json({ success: false, message: "Server error" });
+      }
     }
   }
 }

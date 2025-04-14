@@ -1,17 +1,33 @@
 import { db } from "@/lib/db";
-
+import { ReportStatus } from "@prisma/client";
 // Admin routes
-export async function getReports({ page=1, limit = 10}: {page?:number, limit?: number}={}) {
-  const skip = (page - 1) * limit;
+export async function getReports({ 
+                        page=1, limit = 10, 
+                        sortBy='createdAt', sortOrder='desc', status }:
+                        { page?: number, limit?: number, sortBy?: string, sortOrder?: 'asc' | 'desc', status?: ReportStatus }) 
+                      {
 
-  const totalReports = await db.report.count();
+  const skip = (page - 1) * limit;
+  console.log("status this", sortBy)
+  const totalReports = await db.report.count({
+    where: {
+    status: status as ReportStatus,
+    },
+  });
+
+  // Create a dynamic orderBy object based on the sortBy parameter
+  const orderBy = {};
+  orderBy[sortBy] = sortOrder;
 
   const reports = await db.report.findMany({
-    orderBy: { createdAt: 'desc' },
+    orderBy: orderBy,
     take: limit,
-    skip: skip
+    skip: skip,
+    where: {
+      status: status,
+    },
   });
-  
+
   return {
     data: reports,
     pagination: {
