@@ -79,3 +79,17 @@ export const createTestModerator = async (customData = {}) => {
     data: userData
   });
 }
+
+// crreate test report
+export const createTestReport = async (customData = {}) => {
+  const reportData = {
+    sourceUserId: 1,
+    targetUserId: 2,
+    reason: 'Inappropriate content',
+    ...customData
+  };
+  
+  return db.report.create({
+    data: reportData
+  });
+}

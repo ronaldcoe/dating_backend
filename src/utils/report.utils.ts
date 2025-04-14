@@ -1,6 +1,5 @@
 import { db } from "@/lib/db";
 import { findUserById } from "@/models/user.model";
-import { ValidationError } from "./errors";
 
 /**
  * Validate if report is valid

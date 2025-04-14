@@ -366,6 +366,69 @@
           }
         }
       }
+    },
+    {
+      "type": "GET",
+      "description": "Get report by id",
+      "path": "/admin/reports/:id",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/admin/reports/2"
+      },
+      "responses": {
+        "200": {
+          "description": "Report retrieved successfully",
+          "content": {
+            "success": true,
+            "data": {
+                "id": 2,
+                "sourceUserId": 2,
+                "targetUserId": 3,
+                "reason": "Test report",
+                "createdAt": "2025-04-11T22:05:11.925Z",
+                "updatedAt": "2025-04-14T15:13:56.462Z",
+                "status": "IN_PROGRESS",
+                "resolution": null,
+                "reviewedAt": null,
+                "reviewerId": null
+            }
+          }
+        },
+        "404": {
+          "description": "Report not found",
+          "content": {
+            "success": false,
+            "message": "Report not found"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "success": false,
+            "message": "Not authorized"
+          }
+        }
+      }
     }
   ]
 }

@@ -1,8 +1,9 @@
 import {
-  getReports
+  getReports,
+  getReportById
 } from "@/models/admin/report.model";
 import { validateParams } from "@/utils/report.utils";
-import { ValidationError } from "@/utils/errors";
+import { ValidationError, NotFoundError } from "@/utils/errors";
 
 export class AdminReportService {
   static async getReports(filters) {
@@ -15,6 +16,21 @@ export class AdminReportService {
     }
 
     return await getReports({page, limit, sortBy, sortOrder, status});
+  }
+
+  static async getReportById(reportId:number) {
+    // Validate report ID
+    if (!reportId) {
+      throw new ValidationError("Report ID is required");
+    }
+
+    // Get report by ID
+    const report = await getReportById(reportId);
+    if (!report) {
+      throw new NotFoundError("Report not found");
+    }
+
+    return report;
   }
 
 }

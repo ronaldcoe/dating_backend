@@ -44,4 +44,36 @@ export class AdminReportController {
       }
     }
   }
+
+  /**
+   * Get report by ID
+   * @route GET /api/admin/reports/:id
+   */
+  static async getReportById(req: Request, res: Response): Promise<void> {
+    try {
+      const reportId = req.params.id;
+
+      // Validate report ID
+      if (!reportId) {
+        throw new ValidationError("Report ID is required");
+      }
+
+      // Get report by ID
+      const report = await AdminReportService.getReportById(Number(reportId));
+
+      if (!report) {
+        throw new AppError("Report not found");
+      }
+
+      res.status(200).json({ success: true, data: report });
+    } catch (error:any) {
+      if (error instanceof ValidationError) {
+        res.status(400).json({ success: false, message: error.message });
+      } else if (error instanceof AppError) {
+        res.status(404).json({ success: false, message: error.message });
+      } else {
+        res.status(500).json({ success: false, message: "Server error" });
+      }
+    }
+  }
 }

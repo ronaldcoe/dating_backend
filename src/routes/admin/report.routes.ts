@@ -7,5 +7,7 @@ const router = Router();
 
 // Get all reports with pagination
 router.get('/', AdminReportController.getReports);
+// Get report by ID
+router.get('/:id', AdminReportController.getReportById);
 
 export default router;

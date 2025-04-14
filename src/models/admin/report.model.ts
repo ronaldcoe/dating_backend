@@ -38,3 +38,13 @@ export async function getReports({
     }
   };
 }
+
+export async function getReportById(reportId: number) {
+  const report = await db.report.findUnique({
+    where: {
+      id: reportId
+    }
+  });
+
+  return report;
+}
