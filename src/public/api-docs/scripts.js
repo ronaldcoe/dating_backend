@@ -165,6 +165,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <thead>
                       <tr>
                         <th>Key</th>
+                        <th>Value</th>
                         <th>Type</th>
                         <th>Required</th>
                         <th>Description</th>
@@ -177,6 +178,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 mainPanelHtml += `
                   <tr>
                     <td><span class="badge">${param.key || ''}</span></td>
+                    <td>
+                      <span class="badge">
+                        ${param.value || 'string'}
+                      </span>
+                    </td>
                     <td>${param.type || 'string'}</td>
                     <td>${param.required ? '<span class="required-badge">Required</span>' : 'Optional'}</td>
                     <td>${param.description || ''}</td>

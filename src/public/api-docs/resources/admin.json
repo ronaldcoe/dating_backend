@@ -279,10 +279,31 @@
           "type": "integer",
           "required": false,
           "description": "Number of items per page. Default is 10"
+        },
+        {
+          "key": "status",
+          "value": "PENDING, IN_PROGRESS, RESOLVED, REJECTED",
+          "type": "string",
+          "required": false,
+          "description": "Filter by report status. Default is 'PENDING'"
+        },
+        {
+          "key": "sortBy",
+          "value": "createdAt, status",
+          "type": "string",
+          "required": false,
+          "description": "Field to sort by. Default is 'createdAt'"
+        },
+        {
+          "key": "sortOrder",
+          "value": "asc, desc",
+          "type": "string",
+          "required": false,
+          "description": "Sort order. Default is 'desc'"
         }
       ],
       "requestExample": {
-        "url": "/admin/reports?page=2&limit=10"
+        "url": "/admin/reports?status=all&sortBy=status&sortOrder=desc"
       },
       "responses": {
         "200": {
@@ -290,25 +311,44 @@
           "content": {
             "success": true,
             "data": [
-                {
-                    "id": 2,
-                    "sourceUserId": 2,
-                    "targetUserId": 3,
-                    "reason": "Test report",
-                    "createdAt": "2025-04-11T22:05:11.925Z",
-                    "updatedAt": "2025-04-11T22:05:11.925Z",
-                    "reviewed": false,
-                    "resolution": null,
-                    "reviewedAt": null,
-                    "reviewedBy": null
-                }
+              {
+                  "id": 2,
+                  "sourceUserId": 2,
+                  "targetUserId": 3,
+                  "reason": "Test report",
+                  "createdAt": "2025-04-11T22:05:11.925Z",
+                  "updatedAt": "2025-04-14T15:13:56.462Z",
+                  "status": "IN_PROGRESS",
+                  "resolution": null,
+                  "reviewedAt": null,
+                  "reviewerId": null
+              },
+              {
+                  "id": 3,
+                  "sourceUserId": 2,
+                  "targetUserId": 3,
+                  "reason": "Test report",
+                  "createdAt": "2025-04-13T02:20:49.419Z",
+                  "updatedAt": "2025-04-13T02:20:49.419Z",
+                  "status": "PENDING",
+                  "resolution": null,
+                  "reviewedAt": null,
+                  "reviewerId": null
+              }
             ],
             "pagination": {
                 "page": 1,
                 "limit": 10,
-                "totalItems": 1,
+                "totalItems": 2,
                 "totalPages": 1
             }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "success": false,
+            "message": "Invalid status filter. Allowed values are: PENDING, RESOLVED, REJECTED, all"
           }
         },
         "401": {
