@@ -9,5 +9,7 @@ const router = Router();
 router.get('/', AdminReportController.getReports);
 // Get report by ID
 router.get('/:id', AdminReportController.getReportById);
+// Update report status
+router.patch('/:id', AdminReportController.updateReportStatus);
 
 export default router;

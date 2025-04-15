@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AdminReportService } from "@/services/admin/report.service";
 import { validateParams } from "@/utils/report.utils";
-import { AppError,ValidationError } from "@/utils/errors";
+import { AppError,NotFoundError,ValidationError } from "@/utils/errors";
 
 export class AdminReportController {
   /**
@@ -70,6 +70,36 @@ export class AdminReportController {
       if (error instanceof ValidationError) {
         res.status(400).json({ success: false, message: error.message });
       } else if (error instanceof AppError) {
+        res.status(404).json({ success: false, message: error.message });
+      } else {
+        res.status(500).json({ success: false, message: "Server error" });
+      }
+    }
+  }
+
+  /**
+   * Update report status
+   * @route PATCH /api/admin/reports/:id
+   */
+  static async updateReportStatus(req: Request, res: Response): Promise<void> {
+    try {
+      const reportId = req.params.id;
+      const status = req.body.status;
+      const resolution = req.body.resolution;
+
+      // Validate report ID
+      if (!reportId) {
+        throw new ValidationError("Report ID is required");
+      }
+
+      // Update report status
+      const updatedReport = await AdminReportService.updateReportStatus(Number(reportId), status,  resolution);
+
+      res.status(200).json({ success: true, data: updatedReport });
+    } catch (error:any) {
+      if (error instanceof ValidationError) {
+        res.status(400).json({ success: false, message: error.message });
+      } else if (error instanceof NotFoundError) {
         res.status(404).json({ success: false, message: error.message });
       } else {
         res.status(500).json({ success: false, message: "Server error" });

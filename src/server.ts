@@ -7,6 +7,7 @@ import morgan from 'morgan';
 import { PORT, NODE_ENV } from './config';
 import routes from './routes';
 import path from 'path';
+import { ReportStatus } from '@prisma/client';
 
 // Create Express app
 const app = express();

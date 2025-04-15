@@ -48,3 +48,17 @@ export async function getReportById(reportId: number) {
 
   return report;
 }
+
+export async function updateReportStatus(reportId: number, resolution:string, status: ReportStatus) {
+  const report = await db.report.update({
+    where: {
+      id: reportId
+    },
+    data: {
+      status,
+      resolution
+    }
+  });
+
+  return report;
+}

@@ -1,6 +1,6 @@
-import { db } from "@/lib/db";
+import Joi from "joi";
 import { findUserById } from "@/models/user.model";
-import { ReportReason } from "@prisma/client";
+import { ReportReason, ReportStatus } from "@prisma/client";
 
 /**
  * Validate if report is valid
@@ -86,6 +86,33 @@ export async function validateParams(
     };
   }
 
+  return {
+    success: true,
+    message: 'Valid parameters'
+  };
+}
+
+export async function validateReportUpdate(reportId: number, status: ReportStatus, resolution: string) {
+  const schema = Joi.object({
+    reportId: Joi.number().integer().positive().required(),
+    status: Joi.string().valid(...Object.values(ReportStatus)).required(),
+    resolution: Joi.when('status', {
+      is: Joi.valid(ReportStatus.REJECTED, ReportStatus.RESOLVED),
+      then: Joi.string().required().min(8).max(500),
+      otherwise: Joi.string().allow(null, '').min(8).max(500)
+    })
+  });
+  
+  // Use Joi for the primary validation
+  const validationResult = schema.validate({ reportId, status, resolution });
+  
+  if (validationResult.error) {
+    return {
+      success: false,
+      message: validationResult.error.details[0].message
+    };
+  }
+  
   return {
     success: true,
     message: 'Valid parameters'
