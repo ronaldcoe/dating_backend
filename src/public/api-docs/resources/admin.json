@@ -429,6 +429,94 @@
           }
         }
       }
+    },
+    {
+      "type": "PATCH",
+      "description": "Update report status. Required roles are ADMIN or MODERATOR.",
+      "path": "/admin/reports/:id",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/admin/reports/2",
+        "body": [
+          {
+            "key": "status",
+            "value": "RESOLVED",
+            "type": "string",
+            "required": true,
+            "description": "New status for the report. Allowed values are: PENDING, IN_PROGRESS, RESOLVED, REJECTED"
+          },
+          {
+            "key": "resolution",
+            "value": "User banned for inappropriate behavior",
+            "type": "string",
+            "required": false,
+            "description": "Resolution message. This field is required when the status is REJECTED or RESOLVED"
+          }
+        ]
+      },
+      "responses": {
+        "200": {
+          "description": "Report updated successfully",
+          "content": {
+            "success": true,
+            "message": "Report updated successfully",
+            "data": {
+              "id": 1,
+              "sourceUserId": 1,
+              "targetUserId": 2,
+              "reason": "OTHER",
+              "description": null,
+              "createdAt": "2025-04-14T20:22:52.112Z",
+              "updatedAt": "2025-04-15T16:25:30.234Z",
+              "status": "RESOLVED",
+              "resolution": "User banned for inappropriate behavior",
+              "reviewedAt": null,
+              "reviewerId": null
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "success": false,
+            "message": "\"resolution\" is required"
+          }
+        },
+        "404": {
+          "description": "Report not found",
+          "content": {
+            "success": false,
+            "message": "Report not found"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "success": false,
+            "message": "Not authorized"
+          }
+        }
+      }
     }
   ]
 }
