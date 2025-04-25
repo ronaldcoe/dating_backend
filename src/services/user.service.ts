@@ -81,7 +81,15 @@ export class UserService {
    * Get current user
    */
   static async getCurrentUser(userId: number): Promise<Omit<User, 'password'>> {
-    const user = findUserById(userId);
+   
+    const user = await findUserById(userId);
+    
+    if (!user) {
+      throw new Error('User not found');
+    }
+    
+    // Remove password from user object
+    const { password: _, ...userWithoutPassword } = user;
     
     return user
   }
