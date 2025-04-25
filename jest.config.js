@@ -13,7 +13,7 @@ module.exports = {
   },
   setupFilesAfterEnv: [
     '<rootDir>/src/tests/setup.ts', // Existing setup
-    '<rootDir>/src/tests/setupTestDB.ts' // Add test DB setup
+    '<rootDir>/src/tests/setupTestDb.ts' // Add test DB setup
   ],
   testMatch: ['**/__tests__/**/*.ts?(x)', '**/?(*.)+(spec|test).ts?(x)'],
   collectCoverageFrom: [
