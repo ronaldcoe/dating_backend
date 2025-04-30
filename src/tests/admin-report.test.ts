@@ -405,4 +405,75 @@ describe('Admin Reports API', () => {
     });
   
   })
+
+  describe('GET /api/admin/reports/target/:userId', () => {
+    it('should allow admins to access reports by target user ID', async () => {
+      const admin = await createTesAdmintUser();
+      const token = generateToken(admin.id);
+
+      const regularUser = await createTestUser();
+      const regularUser2 = await createTestUser();
+      const report = await createTestReport({ sourceUserId: regularUser.id, targetUserId: regularUser2.id });
+
+      const response = await request(app)
+        .get(`/api/admin/reports/target/${report.targetUserId}`)
+        .set('Authorization', `Bearer ${token}`);
+      
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.data).toBeDefined();
+    }
+    );
+    it('should allow moderators to access reports by target user ID', async () => {
+      const moderator = await createTestModerator();
+      const token = generateToken(moderator.id);
+
+      const regularUser = await createTestUser();
+      const regularUser2 = await createTestUser();
+      const report = await createTestReport({ sourceUserId: regularUser.id, targetUserId: regularUser2.id });
+
+      const response = await request(app)
+        .get(`/api/admin/reports/target/${report.targetUserId}`)
+        .set('Authorization', `Bearer ${token}`);
+      
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.data).toBeDefined();
+    }
+    );
+
+    it('should reject regular users with forbidden status', async () => {
+      const user = await createTestUser();
+      const token = generateToken(user.id);
+
+      const response = await request(app)
+        .get('/api/admin/reports/target/1')
+        .set('Authorization', `Bearer ${token}`);
+      
+      expect(response.status).toBe(403);
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should require authentication', async () => {
+      const response = await request(app)
+        .get('/api/admin/reports/target/1');
+      
+      expect(response.status).toBe(401);
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should handle not found report', async () => {
+      const admin = await createTesAdmintUser();
+      const token = generateToken(admin.id);
+
+      const response = await request(app)
+        .get('/api/admin/reports/target/9999')
+        .set('Authorization', `Bearer ${token}`);
+      
+      expect(response.status).toBe(404);
+      expect(response.body.success).toBe(false);
+      expect(response.body.message).toBeDefined();
+    }
+    );
+  })
 });

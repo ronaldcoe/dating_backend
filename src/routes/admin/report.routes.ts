@@ -12,4 +12,7 @@ router.get('/:id', AdminReportController.getReportById);
 // Update report status
 router.patch('/:id', AdminReportController.updateReportStatus);
 
+// Get reports by source user ID
+router.get('/target/:userId', AdminReportController.getReportsByTargetUserId);
+
 export default router;

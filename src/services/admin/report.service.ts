@@ -1,7 +1,9 @@
 import {
   getReports,
   getReportById,
-  updateReportStatus
+  updateReportStatus,
+  getReportsBySourceUserId,
+  getReportsByTargetUserId
 } from "@/models/admin/report.model";
 import { ReportStatus } from "@prisma/client";
 import { validateParams, validateReportUpdate } from "@/utils/report.utils";
@@ -51,6 +53,14 @@ export class AdminReportService {
     }
 
     return await updateReportStatus(reportId, resolution, status);
+  }
+
+  static async getReportsBySourceUserId(userId: number) {
+    return await getReportsBySourceUserId(userId);
+  }
+
+  static async getReportsByTargetUserId(userId: number) {
+    return await getReportsByTargetUserId(userId);
   }
 
 }

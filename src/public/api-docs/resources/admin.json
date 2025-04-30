@@ -578,6 +578,105 @@
           }
         }
       }
+    },
+    {
+      "type": "GET",
+      "description": "Get reports by targetUserId. Required roles are ADMIN or MODERATOR.",
+      "path": "/admin/reports/target/:userId",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/admin/reports/target/2"
+      },
+      "responses": {
+        "200": {
+          "description": "Reports retrieved successfully",
+          "content": {
+            "success": true,
+            "message": "Reports fetched successfully",
+            "data": [
+              {
+                "success": true,
+                "message": "Reports fetched successfully",
+                "data": [
+                  {
+                    "id": 2,
+                    "sourceUserId": 1,
+                    "targetUserId": 2,
+                    "reason": "SPAM",
+                    "description": null,
+                    "createdAt": "2025-04-14T21:15:58.433Z",
+                    "updatedAt": "2025-04-14T21:15:58.433Z",
+                    "status": "PENDING",
+                    "resolution": null,
+                    "reviewedAt": null,
+                    "reviewerId": null
+                  },
+                  {
+                    "id": 3,
+                    "sourceUserId": 1,
+                    "targetUserId": 2,
+                    "reason": "OTHER",
+                    "description": null,
+                    "createdAt": "2025-04-14T21:16:31.818Z",
+                    "updatedAt": "2025-04-14T21:16:31.818Z",
+                    "status": "PENDING",
+                    "resolution": null,
+                    "reviewedAt": null,
+                    "reviewerId": null
+                  },
+                  {
+                    "id": 1,
+                    "sourceUserId": 1,
+                    "targetUserId": 2,
+                    "reason": "OTHER",
+                    "description": null,
+                    "createdAt": "2025-04-14T20:22:52.112Z",
+                    "updatedAt": "2025-04-15T16:27:00.236Z",
+                    "status": "RESOLVED",
+                    "resolution": "User banned for inappropriate behavior",
+                    "reviewedAt": null,
+                    "reviewerId": null
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "success": false,
+            "message": "Not authorized"
+          }
+        },
+        "404": {
+          "description": "User not found",
+          "content": {
+            "success": false,
+            "message": "No reports found for this user"
+          }
+        }
+      }
     }
   ]
 }
