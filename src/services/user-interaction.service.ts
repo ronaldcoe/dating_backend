@@ -30,7 +30,7 @@ export class UserInteractionService {
       throw new ValidationError(isValid.message);
     }
 
-    // return await dislikeUser(sourceUserId, targetUserId);
+    return await dislikeUser(sourceUserId, targetUserId);
   }
 
   // Block a user

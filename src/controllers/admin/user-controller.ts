@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { AdminUserService } from '@/services/admin/user.service';
+import { ValidationError } from '@/utils/errors'
 
 export class AdminUserController {
   /**
@@ -69,25 +70,40 @@ export class AdminUserController {
   }
 
   /**
-   * Update user status
-   * @route PUT /api/admin/users/:id/status
+   * Ban user
+   * @route PUT /api/admin/users/ban/:id
    */
-  static async updateUserStatus(req: Request, res: Response): Promise<void> {
+  static async banUser(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const { status } = req.body;
+      const { banReason } = req.body;
 
-      await AdminUserService.updateUserStatus(Number(id), status);
+      if (!banReason) {
+        res.status(400).json({
+          success: false,
+          message: 'Ban reason is required',
+        });
+        return;
+      }
+
+      if (req.user.userId === Number(id)) {
+        res.status(400).json({
+          success: false,
+          message: 'You cannot ban yourself',
+        });
+        return;
+      }
+
+      await AdminUserService.banUser(Number(id), banReason);
 
       res.status(200).json({
         success: true,
-        message: 'User status updated successfully',
+        message: 'User banned successfully',
       });
     } catch (error: any) {
-      res.status(400).json({
-        success: false,
-        message: error.message || 'Failed to update user status',
-      });
+      if (error instanceof ValidationError) {
+        res.status(400).json({ success: false, message: error.message });
+      }
     }
   }
 }
