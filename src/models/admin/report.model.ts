@@ -62,3 +62,20 @@ export async function updateReportStatus(reportId: number, resolution:string, st
 
   return report;
 }
+
+export async function getReportsBySourceUserId(userId: number) {
+  return db.report.findMany({
+    where: {
+      sourceUserId: userId
+    }
+  });
+}
+
+export async function getReportsByTargetUserId(userId: number) {
+  console.log("userId", userId)
+  return db.report.findMany({
+    where: {
+      targetUserId: userId
+    }
+  });
+}

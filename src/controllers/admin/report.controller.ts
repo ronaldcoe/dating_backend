@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { AdminReportService } from "@/services/admin/report.service";
 import { validateParams } from "@/utils/report.utils";
 import { AppError,NotFoundError,ValidationError } from "@/utils/errors";
+import Joi from "joi";
 
 export class AdminReportController {
   /**
@@ -106,4 +107,47 @@ export class AdminReportController {
       }
     }
   }
+
+    /**
+   * Get reports by source user ID
+   * @route GET /api/admin/reports/target/:id
+   */
+    static async getReportsByTargetUserId(req: Request, res: Response): Promise<void> {
+      try {
+        const { userId } = req.params;
+        
+        // Validate user ID
+        const schema = Joi.object({
+          userId: Joi.number().required(),
+        });
+        const { error } = schema.validate({ userId: Number(userId) });
+        
+        if (error) {
+          throw new ValidationError("Invalid user ID");
+        }
+        
+        const reports = await AdminReportService.getReportsByTargetUserId(Number(userId));
+
+        if (reports.length === 0) {
+          throw new NotFoundError("No reports found for this user");
+        }
+        
+         // Check if reports are empty
+  
+        res.status(200).json({ success: true, message: "Reports fetched successfully", data: reports });
+      } catch (error: any) {
+        if (error instanceof ValidationError) {
+          res.status(400).json({ success: false, message: error.message });
+        }
+        else if (error instanceof NotFoundError) {
+          res.status(404).json({ success: false, message: error.message });
+        }
+        else if (error instanceof AppError) {
+          res.status(404).json({ success: false, message: error.message });
+        }
+        else {
+          res.status(500).json({ success: false, message: "Server error" });
+        }
+      }
+    }
 }
