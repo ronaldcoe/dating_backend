@@ -72,7 +72,6 @@ export async function getReportsBySourceUserId(userId: number) {
 }
 
 export async function getReportsByTargetUserId(userId: number) {
-  console.log("userId", userId)
   return db.report.findMany({
     where: {
       targetUserId: userId
