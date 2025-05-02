@@ -44,6 +44,7 @@ model User {
   status               UserStatus
   birthDate            DateTime?                 @db.Date @map("birth_date")
   banReason            String?                   @map("ban_reason") @db.Text
+  lockReason           String?                   @map("lock_reason") @db.Text
   bio                  String?                   @db.Text
   locationLat          Float?                    @map("location_lat")
   locationLng          Float?                    @map("location_lng")

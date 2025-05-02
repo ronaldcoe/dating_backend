@@ -265,4 +265,72 @@ describe('Admin API', () => {
     });
 
   })
+
+  describe('PUT /api/admin/users/lock/:id', () => {
+    it('should allow admins to lock a user', async () => {
+      const admin = await createTesAdmintUser();
+      const user = await createTestUser();
+      const token = generateToken(admin.id);
+
+      const response = await request(app)
+        .put(`/api/admin/users/lock/${user.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ lockReason: 'Inappropriate behavior' });
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.message).toBe('User locked successfully');
+    });
+
+    it('should allow moderators to lock a user', async () => {
+      const moderator = await createTestModerator();
+      const user = await createTestUser();
+      const token = generateToken(moderator.id);
+
+      const response = await request(app)
+        .put(`/api/admin/users/lock/${user.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ lockReason: 'Inappropriate behavior' });
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.message).toBe('User locked successfully');
+    });
+
+    it('should reject regular users with forbidden status', async () => {
+      const user = await createTestUser();
+      const token = generateToken(user.id);
+
+      const response = await request(app)
+        .put(`/api/admin/users/lock/${user.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ lockReason: 'Inappropriate behavior' });
+
+      expect(response.status).toBe(403);
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should require authentication', async () => {
+      const user = await createTestUser();
+
+      const response = await request(app)
+        .put(`/api/admin/users/lock/${user.id}`)
+        .send({ lockReason: 'Inappropriate behavior' });
+
+      expect(response.status).toBe(401);
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should handle invalid tokens', async () => {
+      const user = await createTestUser();
+      const response = await request(app)
+        .put(`/api/admin/users/lock/${user.id}`)
+        .set('Authorization', 'Bearer invalidtoken')
+        .send({ lockReason: 'Inappropriate behavior' });
+
+      expect(response.status).toBe(401);
+      expect(response.body.success).toBe(false);
+
+    })
+  });
 });

@@ -70,12 +70,20 @@ export async function getUserById(id: number) {
 }
 
 
-export async function updateUserStatus(id: number, status: UserStatus, banReason?: string) {
+export async function updateUserStatus(
+  id: number, 
+  status: UserStatus, 
+  options?: { 
+    banReason?: string;
+    lockReason?: string;
+  }
+) {
   return db.user.update({
     where: { id },
     data: { 
-      status, 
-      banReason 
+      status,
+      ...(options?.banReason !== undefined && { banReason: options.banReason }),
+      ...(options?.lockReason !== undefined && { lockReason: options.lockReason })
     }
   });
 }

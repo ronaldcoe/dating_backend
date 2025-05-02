@@ -12,4 +12,7 @@ router.get('/:id', AdminUserController.getUserById);
 //ban user
 router.put('/ban/:id', AdminUserController.banUser);
 
+//lock user
+router.put('/lock/:id', AdminUserController.lockUser);
+
 export default router;
