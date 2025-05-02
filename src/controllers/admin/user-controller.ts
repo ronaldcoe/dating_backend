@@ -106,4 +106,42 @@ export class AdminUserController {
       }
     }
   }
+
+  /**
+   * Lock user
+   * @route PUT /api/admin/users/lock/:id
+   */
+  static async lockUser(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { lockReason } = req.body;
+
+      if (!lockReason) {
+        res.status(400).json({
+          success: false,
+          message: 'Lock reason is required',
+        });
+        return;
+      }
+
+      if (req.user.userId === Number(id)) {
+        res.status(400).json({
+          success: false,
+          message: 'You cannot lock yourself',
+        });
+        return;
+      }
+
+      await AdminUserService.lockUser(Number(id), lockReason);
+
+      res.status(200).json({
+        success: true,
+        message: 'User locked successfully',
+      });
+    } catch (error: any) {
+      if (error instanceof ValidationError) {
+        res.status(400).json({ success: false, message: error.message });
+      }
+    }
+  }
 }

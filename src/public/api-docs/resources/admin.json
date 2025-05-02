@@ -776,6 +776,67 @@
           }
         }
       }
+    },
+    {
+      "type": "PUT",
+      "description": "Lock user. Required roles are ADMIN or MODERATOR.",
+      "path": "/admin/users/lock/:id",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/admin/users/lock/2",
+        "body": [
+          {
+            "key": "lockReason",
+            "value": "Account locked for security reasons",
+            "type": "string",
+            "required": true,
+            "description": "Reason for locking the user. Min lenght is 8 characters"
+          }
+        ]
+      },
+      "responses": {
+        "200": {
+          "description": "User locked successfully",
+          "content": {
+            "success": true,
+            "message": "User locked successfully"
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "success": false,
+            "message": "You cannot lock a moderator or admin"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "success": false,
+            "message": "Not authorized"
+          }
+        }
+      }
     }
   ]
 }

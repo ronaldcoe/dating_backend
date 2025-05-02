@@ -8,6 +8,7 @@ import { generatePhotoUrls } from '@/utils/s3-pre-signed-url';
 import { db } from '@/lib/db'
 import { ValidationError } from '@/utils/errors'
 import { isValidBan } from '@/utils/admin/user.utils'
+
 export class AdminUserService {
   static async getAllUsers(page: number, limit: number) {
     return await getAllUsers({page, limit})
@@ -40,13 +41,21 @@ export class AdminUserService {
     return user;
   }
 
-  static async banUser(id: number, banReason?: string) {
+  static async banUser(id: number, banReason: string) {
     const isValid = await isValidBan(id, banReason);
     if (!isValid.success) {
       throw new ValidationError(isValid.message);
     }
-    console.log('isValid', isValid);
 
-    return await updateUserStatus(id, UserStatus.BANNED, banReason);
+    return await updateUserStatus(id, UserStatus.BANNED, {banReason});
+  }
+
+  static async lockUser(id: number, lockReason: string) {
+    const isValid = await isValidBan(id, lockReason);
+    if (!isValid.success) {
+      throw new ValidationError(isValid.message);
+    }
+
+    return await updateUserStatus(id, UserStatus.LOCKED, {lockReason});
   }
 }
