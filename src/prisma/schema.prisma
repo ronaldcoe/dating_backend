@@ -54,6 +54,7 @@ model User {
   createdAt            DateTime                  @default(now()) @map("created_at")
   updatedAt            DateTime                  @updatedAt @map("updated_at")
   photos               Photo[]
+  moderatedPhotos      Photo[]                  @relation("PhotoModerator")
   refreshTokens        RefreshToken[]
   interests            UserInterest[]
   userPreferences      UserPreference?
@@ -90,11 +91,14 @@ model Photo {
   status            PhotoStatus @default(PENDING) // PENDING, COMPLETED, FAILED, REJECTED
   moderationMessage String?     @map("moderation_message") // Details about moderation
   moderatedAt       DateTime?   @map("moderated_at")
+  moderationUserId  Int?        @map("moderation_user_id") // User who moderated the photo
+  moderatorUser     User?       @relation("PhotoModerator", fields: [moderationUserId], references: [id]) 
   processingError   String?     @map("processing_error") // Any error messages
   createdAt         DateTime    @default(now()) @map("created_at")
   updatedAt         DateTime    @updatedAt @map("updated_at")
 
   @@index([userId])
+  @@index([moderationUserId])
   @@map("photos")
 }
 

@@ -837,6 +837,85 @@
           }
         }
       }
+    },
+    {
+      "type": "PATCH",
+      "description": "Reject user pictures. Required roles are ADMIN or MODERATOR.",
+      "path": "/admin/photos/:id/reject",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/admin/photos/2/reject",
+        "body": [
+          {
+            "key": "moderationMessage",
+            "value": "Inappropriate content detected",
+            "type": "string",
+            "required": true,
+            "description": "Reason for rejecting the photo. Min lenght is 8 characters"
+          }
+        ]
+      },
+      "responses": {
+        "200": {
+          "success": true,
+          "message": "Photo rejected successfully",
+          "description": "Photo rejected successfully",
+          "content": {
+            "success": true,
+            "message": "Photo rejected successfully",
+            "data": {
+              "id": 1,
+              "userId": 2,
+              "originalUrl": "llll",
+              "standardUrl": "jsjsjjs",
+              "thumbnailUrl": "sksjs",
+              "position": 1,
+              "isPrimary": true,
+              "status": "REJECTED",
+              "moderationMessage": "Photo is not appropiate",
+              "moderatedAt": null,
+              "moderationUserId": 1,
+              "processingError": null,
+              "createdAt": "2025-05-06T15:38:03.995Z",
+              "updatedAt": "2025-05-06T16:09:47.817Z"
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "success": false,
+            "message": "\"moderationMessage\" is required"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "success": false,
+            "message": "Not authorized"
+          }
+        }
+      }
     }
   ]
 }
