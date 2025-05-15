@@ -53,7 +53,7 @@ describe('Photo Moderation API', () => {
 
   it('should reject a photo successfully', async () => {
     const response = await request(app)
-      .patch(`/api/admin/photos/${testPhoto.id}/reject`)
+      .patch(`/api/admin/photos/reject/${testPhoto.id}`)
       .set('Authorization', `Bearer ${adminToken}`)
       .send({
         moderationMessage: 'Inappropriate content'
@@ -86,7 +86,7 @@ describe('Photo Moderation API', () => {
     const regularToken = generateToken(regularUser.id);
 
     const response = await request(app)
-      .patch(`/api/admin/photos/${newPhoto.id}/reject`)
+      .patch(`/api/admin/photos/reject/${newPhoto.id}`)
       .set('Authorization', `Bearer ${regularToken}`)
       .send({
         moderationMessage: 'Inappropriate content'
@@ -99,7 +99,7 @@ describe('Photo Moderation API', () => {
 
   it('should not allow rejecting without authentication', async () => {
     const response = await request(app)
-      .patch(`/api/admin/photos/${testPhoto.id}/reject`)
+      .patch(`/api/admin/photos/reject/${testPhoto.id}`)
       .send({
         moderationMessage: 'Inappropriate content'
       });
@@ -112,7 +112,7 @@ describe('Photo Moderation API', () => {
     const nonExistentId = 999999;
     
     const response = await request(app)
-      .patch(`/api/admin/photos/${nonExistentId}/reject`)
+      .patch(`/api/admin/photos/reject/${nonExistentId}`)
       .set('Authorization', `Bearer ${adminToken}`)
       .send({
         moderationMessage: 'Inappropriate content'
@@ -125,7 +125,7 @@ describe('Photo Moderation API', () => {
 
   it('should require a moderation message', async () => {
     const response = await request(app)
-      .patch(`/api/admin/photos/${testPhoto.id}/reject`)
+      .patch(`/api/admin/photos/reject/${testPhoto.id}`)
       .set('Authorization', `Bearer ${adminToken}`)
       .send({});
 
@@ -150,7 +150,7 @@ describe('Photo Moderation API', () => {
 
     // Reject the photo
     await request(app)
-      .patch(`/api/admin/photos/${newPhoto.id}/reject`)
+      .patch(`/api/admin/photos/reject/${newPhoto.id}`)
       .set('Authorization', `Bearer ${adminToken}`)
       .send({
         moderationMessage: 'Inappropriate content'

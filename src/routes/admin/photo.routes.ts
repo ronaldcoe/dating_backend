@@ -5,6 +5,6 @@ import { Role } from "@prisma/client";
 
 const router = Router();
 
-router.patch("/:id/reject", AdminPhotoController.rejectPhoto);
+router.patch("/reject/:id", AdminPhotoController.rejectPhoto);
 
 export default router;

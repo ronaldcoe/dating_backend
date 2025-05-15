@@ -841,7 +841,7 @@
     {
       "type": "PATCH",
       "description": "Reject user pictures. Required roles are ADMIN or MODERATOR.",
-      "path": "/admin/photos/:id/reject",
+      "path": "/admin/photos/reject/:id",
       "headers": [
         {
           "key": "Authorization",
@@ -857,7 +857,7 @@
         }
       ],
       "requestExample": {
-        "url": "/admin/photos/2/reject",
+        "url": "/admin/photos/reject/2",
         "body": [
           {
             "key": "moderationMessage",
