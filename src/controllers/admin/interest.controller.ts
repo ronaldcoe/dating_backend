@@ -33,4 +33,34 @@ export class AdminInterestController {
       }
     }
   }
+
+  /**
+   * Edit an existing interest
+   * @route PUT /api/admin/interests/:id
+   */
+  static async editInterest(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { name } = req.body;
+      if (!name) {
+        res.status(400).json({ success: false, message: 'Interest name is required' });
+        return;
+      }
+
+      // Edit interest
+      const interest = await AdminInterestService.editInterest(parseInt(id), name);
+
+      res.status(200).json({ success: true, data: interest });
+    } catch (error:any) {
+      if (error instanceof ValidationError) {
+        res.status(400).json({ success: false, message: error.message });
+      }
+      else if (error instanceof AppError) {
+        res.status(400).json({ success: false, message: error.message });
+      }
+      else {
+        res.status(500).json({ success: false, message: 'Server error' });
+      }
+    }
+  }
 }

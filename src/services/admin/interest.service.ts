@@ -1,7 +1,8 @@
 import {
   createInterest,
-  findInterestByName,
+  editInterest
 } from "@/models/admin/interest.model";
+import  { validateInterest } from "@/utils/admin/interest.utils";
 import { ValidationError } from "@/utils/errors";
 import { Interest } from "@prisma/client";
 
@@ -11,11 +12,26 @@ export class AdminInterestService {
       throw new ValidationError("Interest name is required");
     }
 
-    const existingInterest = await findInterestByName(name);
-    if (existingInterest) {
-      throw new ValidationError("Interest already exists");
+    const isValid = await validateInterest(name);
+
+    if (isValid.success === false) {
+      throw new ValidationError(isValid.message);
     }
 
     return await createInterest(name);
+  }
+
+  static async editInterest(id: number, name: string): Promise<Interest> {
+    if (!name) {
+      throw new ValidationError("Interest name is required");
+    }
+
+    const isValid = await validateInterest(name, id);
+
+    if (isValid.success === false) {
+      throw new ValidationError(isValid.message);
+    }
+
+    return await editInterest(id, name);
   }
 }

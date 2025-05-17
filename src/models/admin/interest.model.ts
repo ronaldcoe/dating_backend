@@ -38,3 +38,22 @@ export async function findInterestByName(name: string) {
     },
   });
 }
+
+export async function findInterestById(id: number) {
+  return db.interest.findUnique({
+    where: {
+      id,
+    },
+  });
+}
+
+export async function editInterest(id: number, name: string) {
+  return db.interest.update({
+    where: {
+      id,
+    },
+    data: {
+      name,
+    },
+  });
+}

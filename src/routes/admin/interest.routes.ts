@@ -7,5 +7,6 @@ const router = Router();
 
 // Create a new interest
 router.post('/', AdminInterestController.createInterest);
+router.put('/:id', AdminInterestController.editInterest);
 
 export default router;

@@ -984,6 +984,73 @@
           }
         }
       }
+    },
+    {
+      "type": "PUT",
+      "description": "Update interest",
+      "path": "/admin/interests/:id",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/admin/interests/2",
+        "body": [
+          {
+            "key": "name",
+            "value": "🏋️‍♂️ Weightlifting",
+            "type": "string",
+            "required": true,
+            "description": "Name of the interest. Min length is 3 characters"
+          }
+        ]
+      },
+      "responses": {
+        "200": {
+          "description": "Interest updated successfully",
+          "content": {
+            "success": true,
+            "message": "Interest updated successfully",
+            "data": {
+                "id": 2,
+                "name": "🏋️‍♂️ Weightlifting",
+                "createdAt": "2025-05-16T17:17:09.304Z",
+                "updatedAt": "2025-05-16T17:17:09.304Z"
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "success": false,
+            "message": "Interest already exists"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "success": false,
+            "message": "Not authorized"
+          }
+        }
+      }
     }
   ]
 }
