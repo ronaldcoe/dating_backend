@@ -34,6 +34,20 @@
           "type": "integer",
           "required": false,
           "description": "Number of items per page. Default is 10"
+        },
+        {
+          "key": "sortBy",
+          "value": "createdAt, updatedAt, name, email",
+          "type": "string",
+          "required": false,
+          "description": "Field to sort by. Default is 'createdAt'"
+        },
+        {
+          "key": "sortOrder",
+          "value": "asc, desc",
+          "type": "string",
+          "required": false,
+          "description": "Sort order. Default is 'desc'"
         }
       ],
       "requestExample": {
@@ -1034,6 +1048,144 @@
           "content": {
             "success": false,
             "message": "Interest already exists"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "success": false,
+            "message": "Not authorized"
+          }
+        }
+      }
+    },
+    {
+      "type": "GET",
+      "description": "Update interest",
+      "path": "/admin/interests",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "queryParams": [
+        {
+          "key": "page",
+          "value": 1,
+          "type": "integer",
+          "required": false,
+          "description": "Page number for pagination"
+        },
+        {
+          "key": "limit",
+          "value": 10,
+          "type": "integer",
+          "required": false,
+          "description": "Number of items per page. Default is 10"
+        },
+        {
+          "key": "sortBy",
+          "value": "createdAt, updatedAt, name",
+          "type": "string",
+          "required": false,
+          "description": "Field to sort by. Default is 'createdAt'"
+        },
+        {
+          "key": "sortOrder",
+          "value": "asc, desc",
+          "type": "string",
+          "required": false,
+          "description": "Sort order. Default is 'desc'"
+        }
+      ],
+      "requestExample": {
+        "url": "/admin/interests?sortBy=createdAt&sortOrder=desc"
+      },
+      "responses": {
+        "200": {
+          "description": "Interest updated successfully",
+          "content": {
+            "success": true,
+            "message": "Interests fetched successfully",
+            "data": [
+                {
+                    "id": 9,
+                    "name": "Dessert",
+                    "createdAt": "2025-05-20T22:59:40.517Z",
+                    "updatedAt": "2025-05-20T22:59:40.517Z"
+                },
+                {
+                    "id": 8,
+                    "name": "Cooking",
+                    "createdAt": "2025-05-20T22:59:12.827Z",
+                    "updatedAt": "2025-05-20T22:59:12.827Z"
+                },
+                {
+                    "id": 7,
+                    "name": "Tennisa 2",
+                    "createdAt": "2025-05-17T03:41:50.876Z",
+                    "updatedAt": "2025-05-17T03:41:50.876Z"
+                },
+                {
+                    "id": 6,
+                    "name": "Tennisa 1",
+                    "createdAt": "2025-05-17T03:39:46.571Z",
+                    "updatedAt": "2025-05-17T03:39:46.571Z"
+                },
+                {
+                    "id": 5,
+                    "name": "🛒 Shopping",
+                    "createdAt": "2025-05-16T17:17:09.304Z",
+                    "updatedAt": "2025-05-16T17:17:09.304Z"
+                },
+                {
+                    "id": 3,
+                    "name": "Tennias",
+                    "createdAt": "2025-05-16T17:14:41.545Z",
+                    "updatedAt": "2025-05-16T17:14:41.545Z"
+                },
+                {
+                    "id": 2,
+                    "name": "Tennis",
+                    "createdAt": "2025-05-16T17:14:06.692Z",
+                    "updatedAt": "2025-05-16T17:14:06.692Z"
+                },
+                {
+                    "id": 1,
+                    "name": "a",
+                    "createdAt": "2025-05-16T17:13:43.716Z",
+                    "updatedAt": "2025-05-17T04:03:12.066Z"
+                }
+            ],
+            "pagination": {
+                "page": 1,
+                "limit": 20,
+                "totalItems": 8,
+                "totalPages": 1
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "success": false,
+            "message": "Invalid sortBy field. Valid values are: createdAt, updatedAt, name"
           }
         },
         "401": {

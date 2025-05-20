@@ -1,13 +1,14 @@
 import { db } from "@/lib/db";
+import { PaginationOptions } from "@/types";
 
 
-export async function getAllInterests({ page=1, limit = 10}: {page?:number, limit?: number}={}) {
+export async function getAllInterests({ page=1, limit = 10, sortBy= "name", sortOrder="asc"}: PaginationOptions) {
   const skip = (page - 1) * limit;
   
   const totalInterests = await db.interest.count();
   
-  const interests = db.interest.findMany({
-    orderBy: { name: 'asc' },
+  const interests = await db.interest.findMany({
+    orderBy: { [sortBy]: sortOrder },
     take: limit,
     skip: skip
   });

@@ -1,12 +1,18 @@
 import {
+  getAllInterests,
   createInterest,
   editInterest
 } from "@/models/admin/interest.model";
 import  { validateInterest } from "@/utils/admin/interest.utils";
 import { ValidationError } from "@/utils/errors";
 import { Interest } from "@prisma/client";
+import { PaginationOptions } from "@/types";
 
 export class AdminInterestService {
+  static async getAllInterests(page, limit, sortBy, sortOrder) {
+    return await getAllInterests({ page, limit, sortBy, sortOrder });
+  }
+
   static async createInterest(name: string): Promise<Interest> {
     if (!name) {
       throw new ValidationError("Interest name is required");

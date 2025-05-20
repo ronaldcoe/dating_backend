@@ -10,8 +10,8 @@ import { ValidationError } from '@/utils/errors'
 import { isValidBan } from '@/utils/admin/user.utils'
 
 export class AdminUserService {
-  static async getAllUsers(page: number, limit: number) {
-    return await getAllUsers({page, limit})
+  static async getAllUsers(page: number, limit: number, sortBy: string, sortOrder: string) {
+    return await getAllUsers({page, limit, sortBy, sortOrder});
   }
 
   static async getUserById(id: number) {

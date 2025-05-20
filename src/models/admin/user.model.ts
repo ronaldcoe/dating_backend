@@ -1,7 +1,8 @@
 import { db } from "@/lib/db";
 import { UserStatus } from "@prisma/client";
 
-export async function getAllUsers({ page=1, limit = 10}: {page?:number, limit?: number}={}) {
+export async function getAllUsers({ page=1, limit = 10, sortBy="createdAt", sortOrder="asc"}: 
+                                  {page?:number, limit?: number, sortBy?:string, sortOrder?:string}={}) {
   const skip = (page - 1) * limit;
 
   const totalUsers = await db.user.count();
@@ -27,7 +28,7 @@ export async function getAllUsers({ page=1, limit = 10}: {page?:number, limit?: 
       interests: true, // Include related interests
       userPreferences: true, // Include user preferences
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { [sortBy]: sortOrder },
     take: limit,
     skip: skip
   });
