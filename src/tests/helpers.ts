@@ -93,3 +93,15 @@ export const createTestReport = async (customData = {}) => {
     data: reportData
   });
 }
+
+// Create test interest
+export const createTestInterest = async (customData = {}) => {
+  const interestData = {
+    name: `Test Interest ${Date.now()}`,
+    ...customData
+  };
+  
+  return db.interest.create({
+    data: interestData
+  });
+}

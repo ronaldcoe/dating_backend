@@ -1,8 +1,66 @@
 import request from 'supertest';
 import app from '@/server';
-import { createTesAdmintUser, createTestModerator, createTestUser, generateToken } from './helpers';
+import { createTesAdmintUser, createTestModerator, 
+  createTestUser, createTestInterest, generateToken } from './helpers';
 
 describe('Interst admin API', () => {
+  describe('GET /api/admin/interests', () => {
+    it('should return all interests', async () => {
+      const adminUser = await createTesAdmintUser();
+      const token = generateToken(adminUser.id);
+      // Create a test interest
+      await createTestInterest({ name: 'Test Interest' });
+
+      const response = await request(app)
+        .get('/api/admin/interests')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.data).toBeDefined();
+      expect(response.body.data.length).toBeGreaterThan(0);
+      expect(response.body.data[0].name).toBe('Test Interest');
+    });
+
+    it('should return 401 if user is not authenticated', async () => {
+      const response = await request(app)
+        .get('/api/admin/interests');
+
+      expect(response.status).toBe(401);
+    });
+
+    it('should return 403 if user is not an admin', async () => {
+      const moderatorUser = await createTestModerator();
+      const token = generateToken(moderatorUser.id);
+
+      const response = await request(app)
+        .get('/api/admin/interests')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(403);
+    });
+
+    it('should support pagination', async () => {
+      const adminUser = await createTesAdmintUser();
+      const token = generateToken(adminUser.id);
+
+      // Create multiple test interests
+      for (let i = 0; i < 20; i++) {
+        await createTestInterest({ name: `Test Interest ${i}` });
+      }
+
+      const response = await request(app)
+        .get('/api/admin/interests?page=1&limit=10')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.data.length).toBe(10);
+      expect(response.body.pagination).toBeDefined();
+      expect(response.body.pagination.page).toBe(1);
+      expect(response.body.pagination.limit).toBe(10);
+    })
+  })
   describe('POST /api/admin/interests', () => {
     it('should create a new interest', async () => {
       const adminUser = await createTesAdmintUser();
