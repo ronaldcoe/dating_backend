@@ -533,7 +533,7 @@
       }
     },
     {
-      "type": "PUT",
+      "type": "PATCH",
       "description": "Ban user. Required roles are ADMIN or MODERATOR.",
       "path": "/admin/users/ban/:id",
       "headers": [
@@ -792,7 +792,7 @@
       }
     },
     {
-      "type": "PUT",
+      "type": "PATCH",
       "description": "Lock user. Required roles are ADMIN or MODERATOR.",
       "path": "/admin/users/lock/:id",
       "headers": [

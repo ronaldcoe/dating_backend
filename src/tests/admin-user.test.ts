@@ -155,14 +155,14 @@ describe('Admin API', () => {
   
   })
 
-  describe('PUT /api/admin/users/ban/:id', () => {
+  describe('PATCH /api/admin/users/ban/:id', () => {
     it('should allow admins to ban a user', async () => {
       const admin = await createTesAdmintUser();
       const user = await createTestUser();
       const token = generateToken(admin.id);
 
       const response = await request(app)
-        .put(`/api/admin/users/ban/${user.id}`)
+        .patch(`/api/admin/users/ban/${user.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send({ banReason: 'Inappropriate behavior' });
 
@@ -177,7 +177,7 @@ describe('Admin API', () => {
       const token = generateToken(moderator.id);
 
       const response = await request(app)
-        .put(`/api/admin/users/ban/${user.id}`)
+        .patch(`/api/admin/users/ban/${user.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send({ banReason: 'Inappropriate behavior' });
 
@@ -191,7 +191,7 @@ describe('Admin API', () => {
       const token = generateToken(user.id);
 
       const response = await request(app)
-        .put(`/api/admin/users/ban/${user.id}`)
+        .patch(`/api/admin/users/ban/${user.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send({ banReason: 'Inappropriate behavior' });
 
@@ -203,7 +203,7 @@ describe('Admin API', () => {
       const user = await createTestUser();
 
       const response = await request(app)
-        .put(`/api/admin/users/ban/${user.id}`)
+        .patch(`/api/admin/users/ban/${user.id}`)
         .send({ banReason: 'Inappropriate behavior' });
 
       expect(response.status).toBe(401);
@@ -213,7 +213,7 @@ describe('Admin API', () => {
     it('should handle invalid tokens', async () => {
       const user = await createTestUser();
       const response = await request(app)
-        .put(`/api/admin/users/ban/${user.id}`)
+        .patch(`/api/admin/users/ban/${user.id}`)
         .set('Authorization', 'Bearer invalidtoken')
         .send({ banReason: 'Inappropriate behavior' });
 
@@ -227,7 +227,7 @@ describe('Admin API', () => {
       const token = generateToken(admin.id);
 
       const response = await request(app)
-        .put(`/api/admin/users/ban/${user.id}`)
+        .patch(`/api/admin/users/ban/${user.id}`)
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(400);
@@ -241,7 +241,7 @@ describe('Admin API', () => {
       const token = generateToken(admin.id);
 
       const response = await request(app)
-        .put(`/api/admin/users/ban/${user.id}`)
+        .patch(`/api/admin/users/ban/${user.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send({ banReason: 'Bad' });
 
@@ -255,7 +255,7 @@ describe('Admin API', () => {
       const token = generateToken(admin.id);
 
       const response = await request(app)
-        .put(`/api/admin/users/ban/${admin.id}`)
+        .patch(`/api/admin/users/ban/${admin.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send({ banReason: 'Inappropriate behavior' });
 
@@ -266,14 +266,14 @@ describe('Admin API', () => {
 
   })
 
-  describe('PUT /api/admin/users/lock/:id', () => {
+  describe('PATCH /api/admin/users/lock/:id', () => {
     it('should allow admins to lock a user', async () => {
       const admin = await createTesAdmintUser();
       const user = await createTestUser();
       const token = generateToken(admin.id);
 
       const response = await request(app)
-        .put(`/api/admin/users/lock/${user.id}`)
+        .patch(`/api/admin/users/lock/${user.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send({ lockReason: 'Inappropriate behavior' });
 
@@ -288,7 +288,7 @@ describe('Admin API', () => {
       const token = generateToken(moderator.id);
 
       const response = await request(app)
-        .put(`/api/admin/users/lock/${user.id}`)
+        .patch(`/api/admin/users/lock/${user.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send({ lockReason: 'Inappropriate behavior' });
 
@@ -302,7 +302,7 @@ describe('Admin API', () => {
       const token = generateToken(user.id);
 
       const response = await request(app)
-        .put(`/api/admin/users/lock/${user.id}`)
+        .patch(`/api/admin/users/lock/${user.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send({ lockReason: 'Inappropriate behavior' });
 
@@ -314,7 +314,7 @@ describe('Admin API', () => {
       const user = await createTestUser();
 
       const response = await request(app)
-        .put(`/api/admin/users/lock/${user.id}`)
+        .patch(`/api/admin/users/lock/${user.id}`)
         .send({ lockReason: 'Inappropriate behavior' });
 
       expect(response.status).toBe(401);
@@ -324,7 +324,7 @@ describe('Admin API', () => {
     it('should handle invalid tokens', async () => {
       const user = await createTestUser();
       const response = await request(app)
-        .put(`/api/admin/users/lock/${user.id}`)
+        .patch(`/api/admin/users/lock/${user.id}`)
         .set('Authorization', 'Bearer invalidtoken')
         .send({ lockReason: 'Inappropriate behavior' });
 
