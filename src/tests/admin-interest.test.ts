@@ -29,9 +29,9 @@ describe('Interst admin API', () => {
       expect(response.status).toBe(401);
     });
 
-    it('should return 403 if user is not an admin', async () => {
-      const moderatorUser = await createTestModerator();
-      const token = generateToken(moderatorUser.id);
+    it('should return 403 if user is a regular user', async () => {
+      const testUser = await createTestUser();
+      const token = generateToken(testUser.id);
 
       const response = await request(app)
         .get('/api/admin/interests')
@@ -40,12 +40,43 @@ describe('Interst admin API', () => {
       expect(response.status).toBe(403);
     });
 
+    it('should let admins access the endpoint', async () => {
+      const adminUser = await createTesAdmintUser();
+      const token = generateToken(adminUser.id);
+      // Create a test interest
+      await createTestInterest({ name: 'Test Interest 2' });
+      const response = await request(app)
+        .get('/api/admin/interests')
+        .set('Authorization', `Bearer ${token}`);
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.data).toBeDefined();
+      expect(response.body.data[0].name).toBe('Test Interest 2');
+
+    });
+
+    it('should let moderators access the endpoint', async () => {
+      const moderatorUser = await createTestModerator();
+      const token = generateToken(moderatorUser.id);
+      // Create a test interest
+      await createTestInterest({ name: 'Test Interest 3' });
+
+      const response = await request(app)
+        .get('/api/admin/interests')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.data).toBeDefined();
+      expect(response.body.data[0].name).toBe('Test Interest 3');
+    });
+
     it('should support pagination', async () => {
       const adminUser = await createTesAdmintUser();
       const token = generateToken(adminUser.id);
 
       // Create multiple test interests
-      for (let i = 0; i < 20; i++) {
+      for (let i = 4; i < 24; i++) {
         await createTestInterest({ name: `Test Interest ${i}` });
       }
 
@@ -71,8 +102,6 @@ describe('Interst admin API', () => {
         .post('/api/admin/interests')
         .set('Authorization', `Bearer ${token}`)
         .send({ name: 'New Interest' });
-      
-      console.log(response.body);
 
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
@@ -235,6 +264,61 @@ describe('Interst admin API', () => {
         .put(`/api/admin/interests/${interestId}`)
         .set('Authorization', `Bearer ${token}`)
         .send({ name: 'Interest 2' });
+
+      expect(response.status).toBe(400);
+      expect(response.body.success).toBe(false);
+    });
+  })
+
+  describe('DELETE /api/admin/interests/:id', () => {
+    it('should delete an existing interest', async () => {
+      const adminUser = await createTesAdmintUser();
+      const token = generateToken(adminUser.id);
+
+      // Create the interest first
+      const createResponse = await request(app)
+        .post('/api/admin/interests')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ name: 'Interest to Delete' });
+
+      const interestId = createResponse.body.data.id;
+
+      // Delete the interest
+      const response = await request(app)
+        .delete(`/api/admin/interests/${interestId}`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.message).toBeDefined();
+    });
+
+    it('should return 401 if user is not authenticated', async () => {
+      const response = await request(app)
+        .delete('/api/admin/interests/1');
+
+      expect(response.status).toBe(401);
+    });
+
+    it('should return 403 if user is not an admin', async () => {
+      const moderatorUser = await createTestModerator();
+      const token = generateToken(moderatorUser.id);
+
+      const response = await request(app)
+        .delete('/api/admin/interests/1')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(403);
+    });
+
+    it('should return 400 if interest does not exist', async () => {
+      const adminUser = await createTesAdmintUser();
+      const token = generateToken(adminUser.id);
+
+      // Try to delete a non-existing interest
+      const response = await request(app)
+        .delete('/api/admin/interests/99999')
+        .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);

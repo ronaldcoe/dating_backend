@@ -1,7 +1,9 @@
 import {
   getAllInterests,
   createInterest,
-  editInterest
+  editInterest,
+  findInterestById,
+  deleteInterest
 } from "@/models/admin/interest.model";
 import  { validateInterest } from "@/utils/admin/interest.utils";
 import { ValidationError } from "@/utils/errors";
@@ -39,5 +41,15 @@ export class AdminInterestService {
     }
 
     return await editInterest(id, name);
+  }
+
+  static async deleteInterest(id: number): Promise<Interest> {
+    const interest = await findInterestById(id);
+
+    if (!interest) {
+      throw new ValidationError("Interest not found");
+    }
+
+    return await deleteInterest(id);
   }
 }

@@ -15,13 +15,6 @@ export class UserController {
         res.status(401).json({ success: false, message: 'Not authenticated' });
         return;
       }
-      
-      // // Validate profile data
-      // const { error, value } = validateProfileUpdate(req.body);
-      // if (error) {
-      //   res.status(400).json({ success: false, message: error.details[0].message });
-      //   return;
-      // }
 
       const data = req.body;
       

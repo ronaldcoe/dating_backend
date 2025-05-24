@@ -58,3 +58,11 @@ export async function editInterest(id: number, name: string) {
     },
   });
 }
+
+export async function deleteInterest(id: number) {
+  return db.interest.delete({
+    where: {
+      id,
+    },
+  });
+}

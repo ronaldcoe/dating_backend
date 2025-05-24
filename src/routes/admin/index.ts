@@ -12,6 +12,6 @@ const router = Router();
 router.use('/users', authenticate, authorize([Role.ADMIN, Role.MODERATOR]), userRoutes);
 router.use('/reports', authenticate, authorize([Role.ADMIN, Role.MODERATOR]), reportRoutes);
 router.use('/photos', authenticate, authorize([Role.ADMIN, Role.MODERATOR]), photoRoutes);
-router.use('/interests', authenticate, authorize([Role.ADMIN]), interestRoutes);
+router.use('/interests', authenticate, authorize([Role.ADMIN, Role.MODERATOR]), interestRoutes);
 
 export default router;

@@ -1203,6 +1203,64 @@
           }
         }
       }
+    },
+    {
+      "type": "DELETE",
+      "description": "Delete interest",
+      "path": "/admin/interests/:id",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": true,
+          "description": "Authorization token JWT"
+        },
+        {
+          "key": "x-refresh-token",
+          "value": "{token}",
+          "required": true,
+          "description": "Refresh token JWT"
+        }
+      ],
+      "requestExample": {
+        "url": "/admin/interests/2"
+      },
+      "responses": {
+        "200": {
+          "description": "Interest deleted successfully",
+          "content": {
+            "success": true,
+            "message": "Interest deleted successfully",
+            "data": {
+                "id": 2,
+                "name": "Tennis",
+                "createdAt": "2025-05-16T17:14:41.545Z",
+                "updatedAt": "2025-05-16T17:14:41.545Z"
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "success": false,
+            "message": "Interest not found"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "success": false,
+            "message": "Not authenticated"
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "success": false,
+            "message": "Not authorized"
+          }
+        }
+      }
     }
   ]
 }
